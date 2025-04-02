@@ -1,4 +1,4 @@
-package com.example.restaurantmanagerproject;
+package com.example.restaurantmanagerproject.controller;
 
 import java.io.*;
 
