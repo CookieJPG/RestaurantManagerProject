@@ -8,7 +8,7 @@ A web-based restaurant management system built with Java and Jakarta EE.
 - Order processing
 - Table reservations
 - Payment handling
-- Kitchen order tracking
+- Customers Rewards
 
 ## Requirements
 
