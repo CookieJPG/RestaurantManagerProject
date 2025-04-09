@@ -1,36 +1,38 @@
 package com.example.restaurantmanagerproject.model;
 
 /**
- * Create classes, constructors and getters and setters for Beverage (Name, Size, Price), MainDish (Name, Price), and Dessert (Name, Size, Price).
- * Represents a beverage item on the restaurant menu.
+ * Represents a dessert item on the restaurant menu.
  * Contains properties for name, size, and price with appropriate getters and setters.
  */
-
-public class Beverage {
-    // Private member variables to encapsulate the data
+public class Dessert {
+    // Private member variables
     private String name;
     private String size;
     private double price;
 
     /**
-     * Creates a beverage with default values
+     * Default constructor - creates a dessert with default values
      */
-    public Beverage() {
+    public Dessert() {
         this.name = "";
-        this.size = "Medium"; // Default size
-        this.price = 0.0;
+        this.size = ""; // Default size
+        this.price = price;
     }
 
     /**
-     * Creates a beverage with specified values
+     * Creates a Dessert object
+     * @param name  Dessert name (e.g., "Chocolate Cake", "Ice Cream")
+     * @param size  Serving size (e.g., "Single", "Double", "Shareable")
+     * @param price Price in local currency
      */
-    public Beverage(String name, String size, double price) {
+    public Dessert(String name, String size, double price) {
         this.name = name;
         this.size = size;
         this.price = price;
     }
 
-    // Name getter/setter
+    // Getter and Setter methods
+
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
 
@@ -42,8 +44,7 @@ public class Beverage {
     public double getPrice() { return price; }
 
     /**
-     * Sets the price of the beverage
-     * @param price The new price for the beverage
+     * Sets the price of the dessert
      */
     public void setPrice(double price) {
         // Basic validation to ensure price isn't negative
@@ -53,5 +54,4 @@ public class Beverage {
             System.out.println("Error: Price cannot be negative.");
         }
     }
-
 }
