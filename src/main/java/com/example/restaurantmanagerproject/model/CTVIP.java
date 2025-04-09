@@ -8,7 +8,7 @@ public class CTVIP extends Customer implements IRewardable {
 
     @Override
     public Double PointRate() {
-        return 0.0;
+        return 11.0;
     }
 
     @Override

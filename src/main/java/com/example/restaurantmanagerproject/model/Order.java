@@ -3,19 +3,19 @@ package com.example.restaurantmanagerproject.model;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
-public class Orders {
+public class Order {
     //Fields
     private String id;
     private int tableId;
-    private String customerId;
+    private Customer customer;
     private ArrayList<ISellable> orderItems;
     private String orderStatus;
     private LocalDateTime orderDate;
 
-    public Orders(String id, int tableId, String customerId, ArrayList<ISellable> orderItem, String orderStatus, LocalDateTime orderDate) {
+    public Order(String id, int tableId, Customer customer, ArrayList<ISellable> orderItem, String orderStatus, LocalDateTime orderDate) {
         this.id = id;
         this.tableId = tableId;
-        this.customerId = customerId;
+        this.customer = customer;
         this.orderItems = orderItem;
         this.orderStatus = orderStatus;
         this.orderDate = LocalDateTime.now();
@@ -24,7 +24,7 @@ public class Orders {
     //Getters
     public String getId() { return id; }
     public int getTableId() { return tableId; }
-    public String getCustomerId() { return customerId; }
+    public Customer getCustomer() { return customer; }
     public ArrayList<ISellable> getOrderItems() { return orderItems; }
     public String getOrderStatus() { return orderStatus; }
     public LocalDateTime getOrderDate() { return orderDate; }

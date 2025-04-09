@@ -8,7 +8,7 @@ public class CTRegular extends Customer implements IRewardable {
 
     @Override
     public Double PointRate() {
-        return 0.0;
+        return 9.0;
     }
 
     @Override

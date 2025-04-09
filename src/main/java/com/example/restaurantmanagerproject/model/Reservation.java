@@ -1,16 +1,16 @@
 package com.example.restaurantmanagerproject.model;
 
-import java.util.Date;
+import java.time.LocalDate;
 
-public class Reservations {
+public class Reservation {
     private int reservationId;
     private String customerID;
     private int tableID;
-    private Date reservationDate;
+    private LocalDate reservationDate;
     private int numberOfGuests;
 
-    public Reservations(int reservationId, int tableID, String customerID, Date reservationDate,
-            int numberOfGuests) {
+    public Reservation(int reservationId, int tableID, String customerID, LocalDate reservationDate,
+                       int numberOfGuests) {
         this.reservationId = reservationId;
         this.tableID = tableID;
         this.customerID = customerID;
@@ -31,7 +31,7 @@ public class Reservations {
         return customerID;
     }
 
-    public Date getReservationDate() {
+    public LocalDate getReservationDate() {
         return reservationDate;
     }
 
@@ -52,7 +52,7 @@ public class Reservations {
         this.customerID = customerId;
     }
 
-    public void setReservationDate(Date reservationDate) {
+    public void setReservationDate(LocalDate reservationDate) {
         this.reservationDate = reservationDate;
     }
 }

@@ -1,17 +1,17 @@
 package com.example.restaurantmanagerproject.dao;
 
 import java.util.List;
-import com.example.restaurantmanagerproject.model.Orders;
+import com.example.restaurantmanagerproject.model.Order;
 
 public interface DAOOrders {
 
     // CRUD operations for orders
-    List<Orders> getAllOrders();
+    List<Order> getAllOrders();
 
-    void SaveOrder(Orders order); // Save or update order
+    void SaveOrder(Order order); // Save or update order
 
-    void RemoveOrder(Orders order);
+    void RemoveOrder(Order order);
 
-    Orders getOrderById(int orderId);
+    Order getOrderById(int orderId);
 
 }

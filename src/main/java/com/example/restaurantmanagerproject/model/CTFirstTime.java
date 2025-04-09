@@ -8,7 +8,9 @@ public class CTFirstTime extends Customer implements IRewardable {
 
     @Override
     public Double PointRate() {
-        return 0.0;
+        // 1000 points = 1 dollar | 10 points = 1 cent
+        // For 20 dollars spent you get 150
+        return 7.5;
     }
 
     @Override

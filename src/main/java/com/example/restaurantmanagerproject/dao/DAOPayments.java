@@ -4,11 +4,11 @@ public interface DAOPayments {
 
     // CRUD operations for payments
 
-    // Payments createPayment(Payments payment);
+    // TODO: Update the customer points -> customer.addLoyaltyPoints()
+    //  And remove points if the customer paid with them -> removeLoyaltyPoints()
+    // Payment createPayment(Payment payment);
 
-    // Payments readPayment(int paymentId);
-
-    // void updatePayment(Payments payment);
+    // Payment readPayment(int paymentId);
 
     // void deletePayment(int paymentId);
 }
