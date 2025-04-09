@@ -7,40 +7,39 @@ GO
 
 -- Customers Table (Child)
 CREATE TABLE Customers (
-    CustomerID INT PRIMARY KEY,
+    CustomerID NCHAR(12) PRIMARY KEY,
+	CustomerName NVARCHAR(30),
     PhoneNumber NVARCHAR(20),
     Email NVARCHAR(100) UNIQUE,
-    LoyaltyPoints INT DEFAULT 0
+    LoyaltyPoints DECIMAL
 );
 
 
 -- Tables
 CREATE TABLE Tables (
     TableID INT PRIMARY KEY IDENTITY(1,1),
-    Capacity INT NOT NULL,
-    Location NVARCHAR(50),
-    Status NVARCHAR(20) DEFAULT 'Available'
+    IsAvailable BIT
 );
 
 -- Reservations
 CREATE TABLE Reservations (
     ReservationID INT PRIMARY KEY IDENTITY(1,1),
-    CustomerID INT REFERENCES Customers(CustomerID),
+    CustomerID NCHAR(12) REFERENCES Customers(CustomerID),
     TableID INT REFERENCES Tables(TableID),
-    ReservationTime DATETIME NOT NULL,
-    PartySize INT NOT NULL,
+    ReservationDate DATETIME NOT NULL,
+    NumberOfGuest INT NOT NULL,
     Status NVARCHAR(20) DEFAULT 'Pending',
-    SpecialRequests NVARCHAR(MAX)
+	CONSTRAINT CK_ReservationStatus CHECK (Status IN ('Pending', 'Confirmed', 'Cancelled'))
 );
 
 -- Orders
 CREATE TABLE Orders (
     OrderID INT PRIMARY KEY IDENTITY(1,1),
     TableID INT REFERENCES Tables(TableID),
-    CustomerID INT REFERENCES Customers(CustomerID),
-    OrderTime DATETIME DEFAULT GETDATE(),
+    CustomerID NCHAR(12) REFERENCES Customers(CustomerID),
     Status NVARCHAR(20) DEFAULT 'Pending',
-    TotalAmount DECIMAL(10,2)
+    OrderDate DATETIME DEFAULT GETDATE(),
+	CONSTRAINT CK_OrderStatus CHECK (Status IN ('Pending', 'Confirmed', 'Cancelled'))
 );
 
 -- Payments
@@ -54,4 +53,8 @@ CREATE TABLE Payments (
     PaymentTime DATETIME
 );
 
-
+DROP TABLE IF EXISTS Payments;
+DROP TABLE IF EXISTS Orders;
+DROP TABLE IF EXISTS Reservations;
+DROP TABLE IF EXISTS Tables;
+DROP TABLE IF EXISTS Customers;

@@ -13,6 +13,12 @@ public class Dish {
     /**
      * Default constructor - creates a main dish with default values
      */
+
+    public Dish() {
+        this.name = ""; // Default name
+        this.price = 0.0; // Default price
+    }
+
     public Dish(String Name, double price) {
         this.name = Name;
         this.price = price;
@@ -20,11 +26,18 @@ public class Dish {
 
     // Getter and Setter methods
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     // Price getter/setter
-    public double getPrice() { return price; }
+    public double getPrice() {
+        return price;
+    }
 
     /**
      * Sets the price of the main dish

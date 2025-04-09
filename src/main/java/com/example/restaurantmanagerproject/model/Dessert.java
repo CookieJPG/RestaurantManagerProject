@@ -2,7 +2,8 @@ package com.example.restaurantmanagerproject.model;
 
 /**
  * Represents a dessert item on the restaurant menu.
- * Contains properties for name, size, and price with appropriate getters and setters.
+ * Contains properties for name, size, and price with appropriate getters and
+ * setters.
  */
 public class Dessert {
     // Private member variables
@@ -16,11 +17,12 @@ public class Dessert {
     public Dessert() {
         this.name = "";
         this.size = ""; // Default size
-        this.price = price;
+        this.price = 0.0; // Default price
     }
 
     /**
      * Creates a Dessert object
+     * 
      * @param name  Dessert name (e.g., "Chocolate Cake", "Ice Cream")
      * @param size  Serving size (e.g., "Single", "Double", "Shareable")
      * @param price Price in local currency
@@ -33,15 +35,27 @@ public class Dessert {
 
     // Getter and Setter methods
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     // Size getter/setter
-    public String getSize() { return size; }
-    public void setSize(String size) { this.size = size; }
+    public String getSize() {
+        return size;
+    }
+
+    public void setSize(String size) {
+        this.size = size;
+    }
 
     // Price getter/setter
-    public double getPrice() { return price; }
+    public double getPrice() {
+        return price;
+    }
 
     /**
      * Sets the price of the dessert
