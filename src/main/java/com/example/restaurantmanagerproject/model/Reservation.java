@@ -12,8 +12,8 @@ public class Reservation {
 
     public Reservation(int reservationId, int tableID, String customerID, LocalDateTime reservationDate,
             int numberOfGuests) {
-        this.reservationId = reservationId;
         this.tableID = tableID;
+        this.reservationId = reservationId;
         this.customerID = customerID;
         this.reservationDate = reservationDate;
         this.numberOfGuests = numberOfGuests;
@@ -24,9 +24,9 @@ public class Reservation {
     public Reservation(int reservationId2, String customerId2, int tableId2,
             LocalDateTime reservationDate2,
             int numberOfGuests2, String status) {
+        this.tableID = tableId2;
         this.reservationId = reservationId2;
         this.customerID = customerId2;
-        this.tableID = tableId2;
         this.reservationDate = reservationDate2;
         this.numberOfGuests = numberOfGuests2;
         this.status = status;

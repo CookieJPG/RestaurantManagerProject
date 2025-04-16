@@ -4,8 +4,8 @@ public class Table {
     private int id;
     private boolean available;
 
-    public Table(int id, boolean b) {
-        this.id = id;
+    public Table(boolean b) {
+        this.id = id; // Solo si quitamos el IDENTITY de la base de datos
         this.available = b;
     }
 
@@ -23,5 +23,9 @@ public class Table {
 
     public void UnReserve() {
         available = true;
+    }
+
+    public void setId(int int1) {
+        this.id = int1;
     }
 }

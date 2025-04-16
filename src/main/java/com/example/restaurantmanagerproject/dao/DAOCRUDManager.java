@@ -8,6 +8,7 @@ import com.example.restaurantmanagerproject.model.CTVIP;
 import com.example.restaurantmanagerproject.model.Customer;
 import com.example.restaurantmanagerproject.model.Dessert;
 import com.example.restaurantmanagerproject.model.Dish;
+import com.example.restaurantmanagerproject.model.IRewardable;
 import com.example.restaurantmanagerproject.model.ISellable;
 import com.example.restaurantmanagerproject.model.Order;
 import com.example.restaurantmanagerproject.model.Payment;
@@ -113,12 +114,12 @@ public class DAOCRUDManager implements DAOReservations, DAOOrders, DAOPayments, 
             System.err.println("Error finding order: " + e.getMessage());
             return null;
         } finally {
-            DbUtil.closeQuietly((Connection) rsCustomer);
-            DbUtil.closeQuietly((Connection) stmtCustomer);
-            DbUtil.closeQuietly((Connection) rsItems);
-            DbUtil.closeQuietly((Connection) stmtItems);
-            DbUtil.closeQuietly((Connection) rs);
-            DbUtil.closeQuietly((Connection) stmt);
+            DbUtil.closeQuietly(rsCustomer);
+            DbUtil.closeQuietly(stmtCustomer);
+            DbUtil.closeQuietly(rsItems);
+            DbUtil.closeQuietly(stmtItems);
+            DbUtil.closeQuietly(rs);
+            DbUtil.closeQuietly(stmt);
             DbUtil.closeQuietly(conn);
         }
 
@@ -205,19 +206,28 @@ public class DAOCRUDManager implements DAOReservations, DAOOrders, DAOPayments, 
     @Override // * Funcionando
     public void SaveOrder(Order order) {
         Connection conn = null;
+        ResultSet generatedKeys = null;
         try {
             conn = DbUtil.getConnection();
 
             if (order.getId() == 0) {
                 // Insert new order
                 PreparedStatement stmt = conn.prepareStatement(
-                        "INSERT INTO Orders (TableID, CustomerID, Status, OrderDate) VALUES (?, ?, ?, ?)");
+                        "INSERT INTO Orders (TableID, CustomerID, Status, OrderDate) VALUES (?, ?, ?, ?)",
+                        Statement.RETURN_GENERATED_KEYS);
                 stmt.setInt(1, order.getTableId());
                 stmt.setString(2, order.getCustomer().getId()); // * Se arregla el error si se pone el .getId()
                 stmt.setString(3, order.getOrderStatus());
                 stmt.setTimestamp(4, Timestamp.valueOf(order.getOrderDate()));
 
-                stmt.executeUpdate();
+                int affectedRows = stmt.executeUpdate();
+
+                if (affectedRows > 0) {
+                    generatedKeys = stmt.getGeneratedKeys();
+                    if (generatedKeys.next()) {
+                        order.setId(generatedKeys.getInt(1)); // Set the generated ID
+                    }
+                }
             } else {
                 // Update existing order
                 PreparedStatement stmt = conn.prepareStatement(
@@ -270,10 +280,11 @@ public class DAOCRUDManager implements DAOReservations, DAOOrders, DAOPayments, 
             if (reservation.getReservationId() == 0) {
                 // Insert new reservation
                 PreparedStatement stmt = conn.prepareStatement(
-                        "INSERT INTO Reservations (CustomerID, TableID, ReservationDate, NumberOfGuest, Status) " +
-                                "VALUES (?, ?, ?, ?, ?)");
-                stmt.setString(1, reservation.getCustomerID());
-                stmt.setInt(2, reservation.getTableID());
+                        "INSERT INTO Reservations (TableID, CustomerID, ReservationDate, NumberOfGuest, Status) " +
+                                "VALUES (?, ?, ?, ?, ?)",
+                        Statement.RETURN_GENERATED_KEYS);
+                stmt.setInt(1, reservation.getTableID());
+                stmt.setString(2, reservation.getCustomerID());
                 stmt.setTimestamp(3, Timestamp.valueOf(reservation.getReservationDate()));
                 stmt.setInt(4, reservation.getNumberOfGuests());
                 stmt.setString(5, reservation.getStatus());
@@ -289,10 +300,10 @@ public class DAOCRUDManager implements DAOReservations, DAOOrders, DAOPayments, 
             } else {
                 // Update existing reservation
                 PreparedStatement stmt = conn.prepareStatement(
-                        "UPDATE Reservations SET CustomerID = ?, TableID = ?, ReservationDate = ?, " +
+                        "UPDATE Reservations SET TableID = ?,  CustomerID = ?, ReservationDate = ?, " +
                                 "NumberOfGuest = ?, Status = ? WHERE ReservationID = ?");
-                stmt.setString(1, reservation.getCustomerID());
-                stmt.setInt(2, reservation.getTableID());
+                stmt.setInt(1, reservation.getTableID());
+                stmt.setString(2, reservation.getCustomerID());
                 stmt.setTimestamp(3, Timestamp.valueOf(reservation.getReservationDate()));
                 stmt.setInt(4, reservation.getNumberOfGuests());
                 stmt.setString(5, reservation.getStatus());
@@ -358,10 +369,16 @@ public class DAOCRUDManager implements DAOReservations, DAOOrders, DAOPayments, 
         try {
             conn = DbUtil.getConnection();
             PreparedStatement stmt = conn.prepareStatement(
-                    "INSERT INTO Tables (TableID,  IsAvailable) VALUES (?, ?)");
-            stmt.setInt(1, table.getId());
-            stmt.setBoolean(2, table.isAvailable());
+                    "INSERT INTO Mesas(IsAvailable) VALUES (?)",
+                    Statement.RETURN_GENERATED_KEYS);
+            stmt.setBoolean(1, table.isAvailable());
             stmt.executeUpdate();
+
+            // Obtener el ID generado
+            ResultSet rs = stmt.getGeneratedKeys();
+            if (rs.next()) {
+                table.setId(rs.getInt(1));
+            }
         } catch (SQLException e) {
             System.err.println("Error adding table: " + e.getMessage());
         } finally {
@@ -375,7 +392,7 @@ public class DAOCRUDManager implements DAOReservations, DAOOrders, DAOPayments, 
         try {
             conn = DbUtil.getConnection();
             PreparedStatement stmt = conn.prepareStatement(
-                    "UPDATE Tables SET IsAvailable = ? WHERE TableID = ?");
+                    "UPDATE Mesas SET IsAvailable = ? WHERE TableID = ?");
             stmt.setBoolean(1, table.isAvailable());
             stmt.setInt(2, table.getId());
             stmt.executeUpdate();
@@ -532,14 +549,14 @@ public class DAOCRUDManager implements DAOReservations, DAOOrders, DAOPayments, 
             }
 
             // 2. Restar puntos usados (si aplica)
-            if (payment.getPointsUsed() > 0) {
+            if (payment.getPointsGained() > 0) {
                 PreparedStatement stmt = conn.prepareStatement(
                         "UPDATE Customers SET LoyaltyPoints = LoyaltyPoints - ? WHERE CustomerID = ?");
-                stmt.setInt(1, payment.getPointsUsed());
+                stmt.setInt(1, payment.getPointsGained());
                 stmt.setString(2, customer.getId());
                 stmt.executeUpdate();
 
-                customer.removeLoyaltyPoints(payment.getPointsUsed());
+                customer.removeLoyaltyPoints(payment.getPointsGained());
             }
         } catch (SQLException e) {
             System.err.println("Error updating loyalty points: " + e.getMessage());
@@ -551,15 +568,15 @@ public class DAOCRUDManager implements DAOReservations, DAOOrders, DAOPayments, 
     // Customers
 
     // * SOLUCION A LA EXCEPCION DE CUSTOMER NO INSTANCIABLE
-    private Customer createCustomerInstance(String id, String name, Customer.Type type, String email, String phone,
+    private Customer createCustomerInstance(String id, String name, IRewardable.Type type, String email, String phone,
             double loyaltyPoints) {
         switch (type) {
-            case First:
-                return new CTFirstTime(name);
-            case Regular:
-                return new CTRegular(name);
+            case FIRST:
+                return new CTFirstTime(id, name, email, phone, loyaltyPoints);
+            case REGULAR:
+                return new CTRegular(id, name, email, phone, loyaltyPoints);
             case VIP:
-                return new CTVIP(name);
+                return new CTVIP(id, name, email, phone, loyaltyPoints);
             default:
                 throw new IllegalArgumentException("Tipo de cliente desconocido: " + type);
         }
@@ -576,7 +593,15 @@ public class DAOCRUDManager implements DAOReservations, DAOOrders, DAOPayments, 
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 String name = rs.getString("CustomerName");
-                Customer.Type type = Customer.Type.valueOf(rs.getString("type").toUpperCase());
+                String typeStr = rs.getString("CustomerType");
+                IRewardable.Type type = null;
+                try {
+                    type = Customer.Type.valueOf(typeStr.toUpperCase());
+                } catch (IllegalArgumentException e) {
+                    // Handle unknown types gracefully
+                    System.err.println("Unknown customer type: " + typeStr);
+                    type = Customer.Type.FIRST; // Default value
+                }
                 String email = rs.getString("Email");
                 String phone = rs.getString("PhoneNumber");
                 double loyaltyPoints = rs.getDouble("LoyaltyPoints");
@@ -607,7 +632,15 @@ public class DAOCRUDManager implements DAOReservations, DAOOrders, DAOPayments, 
             while (rs.next()) {
                 String id = rs.getString("CustomerID");
                 String name = rs.getString("CustomerName");
-                Customer.Type type = Customer.Type.valueOf(rs.getString("type").toUpperCase());
+                String typeStr = rs.getString("CustomerType");
+                IRewardable.Type type = null;
+                try {
+                    type = Customer.Type.valueOf(typeStr.toUpperCase());
+                } catch (IllegalArgumentException e) {
+                    // Handle unknown types gracefully
+                    System.err.println("Unknown customer type: " + typeStr);
+                    type = Customer.Type.FIRST; // Default value
+                }
                 String email = rs.getString("Email");
                 String phone = rs.getString("PhoneNumber");
                 double loyaltyPoints = rs.getDouble("LoyaltyPoints");
@@ -645,10 +678,10 @@ public class DAOCRUDManager implements DAOReservations, DAOOrders, DAOPayments, 
             if (count > 0) {
                 // Update existing customer
                 stmt = conn.prepareStatement(
-                        "UPDATE Customers SET CustomerName = ?, type = ?, Email = ?, PhoneNumber = ?, LoyaltyPoints = ? WHERE CustomerID = ?");
+                        "UPDATE Customers SET CustomerName = ?, CustomerType = ?, Email = ?, PhoneNumber = ?, LoyaltyPoints = ? WHERE CustomerID = ?");
                 stmt.setString(1, customer.getName());
-                String type = customer.getId().charAt(0) == '1' ? "First"
-                        : customer.getId().charAt(0) == '2' ? "Regular" : "VIP";
+                String type = customer.getId().charAt(0) == '1' ? "FIRST"
+                        : customer.getId().charAt(0) == '2' ? "REGULAR" : "VIP";
                 stmt.setString(2, type);
                 stmt.setString(3, customer.getEmail());
                 stmt.setString(4, customer.getPhone());
@@ -657,7 +690,7 @@ public class DAOCRUDManager implements DAOReservations, DAOOrders, DAOPayments, 
             } else {
                 // Insert new customer
                 stmt = conn.prepareStatement(
-                        "INSERT INTO Customers (CustomerID, CustomerName, type, Email, PhoneNumber, LoyaltyPoints) VALUES (?, ?, ?, ?, ?, ?)");
+                        "INSERT INTO Customers (CustomerID, CustomerName, CustomerType, Email, PhoneNumber, LoyaltyPoints) VALUES (?, ?, ?, ?, ?, ?)");
                 stmt.setString(1, customer.getId());
                 stmt.setString(2, customer.getName());
                 stmt.setString(3, customer.getType().toString());

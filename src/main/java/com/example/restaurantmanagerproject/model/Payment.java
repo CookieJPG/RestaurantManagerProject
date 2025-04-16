@@ -58,7 +58,7 @@ public class Payment {
         return paymentDate;
     }
 
-    public int getPointsUsed() {
+    public int getPointsGained() {
         Customer customer = order.getCustomer();
         return (int) (amount * customer.PointRate());
     }
@@ -70,7 +70,7 @@ public class Payment {
     // Setters
     public void setAmount(double amount) {
         Customer customer = order.getCustomer();
-        if (customer.getType() == IRewardable.Type.First) {
+        if (customer.getType() == IRewardable.Type.FIRST) {
             this.amount = amount;
         } else {
             double discountAmount = amount * (customer.DiscountRate() / 100);

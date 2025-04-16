@@ -3,17 +3,17 @@ package com.example.restaurantmanagerproject.model;
 public class CTFirstTime extends Customer {
 
     public CTFirstTime(String name) {
-        super(name, Type.First, null, null);
+        super(name, Type.FIRST, null, null);
         setId();
     }
 
     public CTFirstTime(String name, String email, String phone) {
-        super(name, Type.First, email, phone);
+        super(name, Type.FIRST, email, phone);
         setId();
     }
 
     public CTFirstTime(String id, String name, String email, String phone, double loyaltyPoints) {
-        super(id, name, Type.First, email, phone, loyaltyPoints);
+        super(id, name, Type.FIRST, email, phone, loyaltyPoints);
     }
 
     @Override
@@ -33,8 +33,4 @@ public class CTFirstTime extends Customer {
         return 0.0;
     }
 
-    @Override
-    public void Upgrade() {
-
-    }
 }

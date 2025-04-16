@@ -49,13 +49,13 @@ public abstract class Customer implements IRewardable {
     public void setId() {
         SecureRandom random = new SecureRandom();
         switch (type) {
-            case Type.First -> {
+            case Type.FIRST -> {
                 byte[] bytes = new byte[9];
                 random.nextBytes(bytes);
                 String randomStr = Base64.getUrlEncoder().withoutPadding().encodeToString(bytes).substring(0, 11);
                 id = "1" + randomStr;
             }
-            case Type.Regular -> {
+            case Type.REGULAR -> {
                 byte[] bytes = new byte[9];
                 random.nextBytes(bytes);
                 String randomStr = Base64.getUrlEncoder().withoutPadding().encodeToString(bytes).substring(0, 11);
@@ -79,25 +79,31 @@ public abstract class Customer implements IRewardable {
     }
 
     public void setType(Type newType) {
-        type = Objects.requireNonNullElse(newType, Type.First);
+        type = Objects.requireNonNullElse(newType, Type.FIRST);
     }
 
-    // TODO: Verify that the email has an @something.smth
     public String getEmail() {
         return email;
     }
 
     public void setEmail(String email) {
-        this.email = email;
+        if (email != null) {
+            if (email.contains("@")) {
+                this.email = email;
+            }
+        }
     }
 
-    // TODO: Verify that the phone number is the correct length
     public String getPhone() {
         return phone;
     }
 
     public void setPhone(String phone) {
-        this.phone = phone;
+        if (phone != null) {
+            if (phone.length() == 10) {
+                this.phone = phone;
+            }
+        }
     }
 
     public double getLoyaltyPoints() {

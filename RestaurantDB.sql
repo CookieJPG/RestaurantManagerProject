@@ -17,7 +17,7 @@ CREATE TABLE
 
 -- Tables
 CREATE TABLE
-    Tables (
+    Mesas (
         TableID INT PRIMARY KEY IDENTITY (1, 1),
         IsAvailable BIT
     );
@@ -27,7 +27,7 @@ CREATE TABLE
     Reservations (
         ReservationID INT PRIMARY KEY IDENTITY (1, 1),
         CustomerID NCHAR(12) REFERENCES Customers (CustomerID),
-        TableID INT REFERENCES Tables (TableID),
+        TableID INT REFERENCES Mesas (TableID),
         ReservationDate DATETIME NOT NULL,
         NumberOfGuest INT NOT NULL,
         Status NVARCHAR (20) DEFAULT 'Pending',
@@ -38,7 +38,7 @@ CREATE TABLE
 CREATE TABLE
     Orders (
         OrderID INT PRIMARY KEY IDENTITY (1, 1),
-        TableID INT REFERENCES Tables (TableID),
+        TableID INT REFERENCES Mesas (TableID),
         CustomerID NCHAR(12) REFERENCES Customers (CustomerID),
         Status NVARCHAR (20) DEFAULT 'Pending',
         OrderDate DATETIME DEFAULT GETDATE (),
@@ -83,7 +83,7 @@ DROP TABLE IF EXISTS Orders;
 
 DROP TABLE IF EXISTS Reservations;
 
-DROP TABLE IF EXISTS Tables;
+DROP TABLE IF EXISTS Mesas;
 
 DROP TABLE IF EXISTS Customers;
 
