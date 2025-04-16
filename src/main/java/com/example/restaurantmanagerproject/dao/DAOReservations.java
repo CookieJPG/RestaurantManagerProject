@@ -1,7 +1,8 @@
 package com.example.restaurantmanagerproject.dao;
 
-import com.example.restaurantmanagerproject.model.Reservation;
 import java.util.List;
+
+import com.example.restaurantmanagerproject.model.Reservation;
 
 public interface DAOReservations {
 

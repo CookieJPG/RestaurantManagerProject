@@ -5,7 +5,7 @@ package com.example.restaurantmanagerproject.model;
  * Contains properties for name and price with appropriate getters and setters.
  * Main dishes typically don't have sizes in most restaurants.
  */
-public class Dish {
+public class Dish implements ISellable {
     // Private member variables
     private String name;
     private double price;
@@ -19,7 +19,7 @@ public class Dish {
         this.price = 0.0; // Default price
     }
 
-    public Dish(String Name, double price) {
+    public Dish(String Name, String string, double price) {
         this.name = Name;
         this.price = price;
     }
@@ -37,6 +37,11 @@ public class Dish {
     // Price getter/setter
     public double getPrice() {
         return price;
+    }
+
+    @Override
+    public String getCategory() {
+        return "Dish";
     }
 
     /**

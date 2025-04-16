@@ -1,9 +1,19 @@
 package com.example.restaurantmanagerproject.model;
 
-public class CTRegular extends Customer implements IRewardable {
+public class CTRegular extends Customer {
 
     public CTRegular(String name) {
-        super(name, Type.Regular);
+        super(name, Type.First, null, null);
+        setId();
+    }
+
+    public CTRegular(String name, String email, String phone) {
+        super(name, Type.First, email, phone);
+        setId();
+    }
+
+    public CTRegular(String id, String name, String email, String phone, double loyaltyPoints) {
+        super(id, name, Type.First, email, phone, loyaltyPoints);
     }
 
     @Override

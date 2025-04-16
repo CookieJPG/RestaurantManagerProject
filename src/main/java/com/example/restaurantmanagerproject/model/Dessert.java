@@ -5,7 +5,7 @@ package com.example.restaurantmanagerproject.model;
  * Contains properties for name, size, and price with appropriate getters and
  * setters.
  */
-public class Dessert {
+public class Dessert implements ISellable {
     // Private member variables
     private String name;
     private String size;
@@ -55,6 +55,11 @@ public class Dessert {
     // Price getter/setter
     public double getPrice() {
         return price;
+    }
+
+    @Override
+    public String getCategory() {
+        return "Dessert";
     }
 
     /**

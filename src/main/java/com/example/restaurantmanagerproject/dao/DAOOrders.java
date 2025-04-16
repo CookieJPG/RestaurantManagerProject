@@ -1,6 +1,7 @@
 package com.example.restaurantmanagerproject.dao;
 
 import java.util.List;
+
 import com.example.restaurantmanagerproject.model.Order;
 
 public interface DAOOrders {

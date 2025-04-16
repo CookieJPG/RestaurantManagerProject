@@ -1,44 +1,70 @@
 package com.example.restaurantmanagerproject.model;
 
-import java.time.LocalDate;
-import java.util.Objects;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class Payment {
+    private int paymentId;
     private double amount;
     private Status status;
-    private final Order order;
-    private final String paymentMethod;
-    private final String transactionId;
-    private final LocalDate paymentDate;
+    private Order order;
+    private String paymentMethod;
+    private String transactionId;
+    private LocalDateTime paymentDate;
 
-    public Payment(Order order, double amount, String paymentMethod) {
+    public Payment(int paymentId, Order order, double amount, String paymentMethod, String transactionId, Status status,
+            LocalDateTime paymentDate) {
+        this.paymentId = paymentId;
         this.order = order;
         this.amount = amount;
         this.paymentMethod = paymentMethod;
-        this.transactionId = UUID.randomUUID().toString();
-        this.status = Status.PENDING;
-        this.paymentDate = LocalDate.now();
+        this.transactionId = transactionId;
+        this.status = status;
+        this.paymentDate = paymentDate;
+    }
+
+    public Payment(int paymentId, Order order, double amount, String paymentMethod) {
+        this(paymentId, order, amount, paymentMethod, UUID.randomUUID().toString(), Status.PENDING,
+                LocalDateTime.now());
     }
 
     // Getters
-    public LocalDate getPaymentDate() {
-        return paymentDate;
+
+    public int getPaymentId() {
+        return paymentId;
     }
+
     public Order getOrder() {
         return order;
     }
+
     public double getAmount() {
         return amount;
     }
-    public Status getStatus() {
-        return status;
-    }
+
     public String getPaymentMethod() {
         return paymentMethod;
     }
+
     public String getTransactionId() {
         return transactionId;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public LocalDateTime getPaymentDate() {
+        return paymentDate;
+    }
+
+    public int getPointsUsed() {
+        Customer customer = order.getCustomer();
+        return (int) (amount * customer.PointRate());
+    }
+
+    public Customer getCustomer() {
+        return order.getCustomer();
     }
 
     // Setters
@@ -51,7 +77,29 @@ public class Payment {
             this.amount = amount - discountAmount;
         }
     }
+
     public void setStatus(Status status) {
         this.status = status;
     }
+
+    public void setPaymentId(int paymentId) {
+        this.paymentId = paymentId;
+    }
+
+    public void setOrder(Order order) {
+        this.order = order;
+    }
+
+    public void setPaymentMethod(String paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+
+    public void setTransactionId(String transactionId) {
+        this.transactionId = transactionId;
+    }
+
+    public void setPaymentTime(LocalDateTime paymentTime) {
+        this.paymentDate = paymentTime;
+    }
+
 }

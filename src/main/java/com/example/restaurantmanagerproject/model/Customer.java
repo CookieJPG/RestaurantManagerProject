@@ -12,23 +12,38 @@ public abstract class Customer implements IRewardable {
     private String phone;
     private double loyaltyPoints;
 
-    public Customer(String name, Type type) {
+    // Constructor for creating a customer with an ID
+    public Customer(String id, String name, Type type, String email, String phone, double loyaltyPoints) {
+        this.id = id;
         this.name = name;
         this.type = type;
+        this.email = email;
+        this.phone = phone;
+        this.loyaltyPoints = loyaltyPoints;
+    }
+
+    public Customer(String name, Type type) {
+        this(null, name, type, null, null, 0);
         setId();
-        this.loyaltyPoints = 0;
     }
 
     public Customer(String name, Type type, String email, String phone) {
-        this(name, type);
-        this.email = email;
-        this.phone = phone;
+        this(null, name, type, email, phone, 0);
+        setId();
     }
 
     // Getters
-    public String getId() { return id; }
-    public String getName() { return name; }
-    public Type getType() { return type; }
+    public String getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Type getType() {
+        return type;
+    }
 
     // Setters
     public void setId() {
@@ -54,6 +69,7 @@ public abstract class Customer implements IRewardable {
             }
         }
     }
+
     public void setName(String newName) {
         if (newName != null) {
             if (newName.length() > 3) {
@@ -61,20 +77,25 @@ public abstract class Customer implements IRewardable {
             }
         }
     }
-    public void setType(Type newType) { type = Objects.requireNonNullElse(newType, Type.First); }
+
+    public void setType(Type newType) {
+        type = Objects.requireNonNullElse(newType, Type.First);
+    }
 
     // TODO: Verify that the email has an @something.smth
     public String getEmail() {
         return email;
     }
+
     public void setEmail(String email) {
         this.email = email;
     }
 
-    //TODO: Verify that the phone number is the correct length
+    // TODO: Verify that the phone number is the correct length
     public String getPhone() {
         return phone;
     }
+
     public void setPhone(String phone) {
         this.phone = phone;
     }
@@ -82,10 +103,13 @@ public abstract class Customer implements IRewardable {
     public double getLoyaltyPoints() {
         return loyaltyPoints;
     }
+
     public void addLoyaltyPoints(double loyaltyPoints) {
         this.loyaltyPoints += loyaltyPoints;
     }
+
     public void removeLoyaltyPoints(double loyaltyPoints) {
         this.loyaltyPoints -= loyaltyPoints;
     }
+
 }

@@ -1,12 +1,14 @@
 package com.example.restaurantmanagerproject.model;
 
 /**
- * Create classes, constructors and getters and setters for Beverage (Name, Size, Price), MainDish (Name, Price), and Dessert (Name, Size, Price).
+ * Create classes, constructors and getters and setters for Beverage (Name,
+ * Size, Price), MainDish (Name, Price), and Dessert (Name, Size, Price).
  * Represents a beverage item on the restaurant menu.
- * Contains properties for name, size, and price with appropriate getters and setters.
+ * Contains properties for name, size, and price with appropriate getters and
+ * setters.
  */
 
-public class Beverage {
+public class Beverage implements ISellable {
     // Private member variables to encapsulate the data
     private String name;
     private String size;
@@ -31,18 +33,36 @@ public class Beverage {
     }
 
     // Name getter/setter
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     // Size getter/setter
-    public String getSize() { return size; }
-    public void setSize(String size) { this.size = size; }
+    public String getSize() {
+        return size;
+    }
+
+    public void setSize(String size) {
+        this.size = size;
+    }
 
     // Price getter/setter
-    public double getPrice() { return price; }
+    public double getPrice() {
+        return price;
+    }
+
+    @Override
+    public String getCategory() {
+        return "Dessert";
+    }
 
     /**
      * Sets the price of the beverage
+     * 
      * @param price The new price for the beverage
      */
     public void setPrice(double price) {
