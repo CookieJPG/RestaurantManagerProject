@@ -77,6 +77,28 @@ CREATE TABLE
         PaymentTime DATETIME
     );
 
+
+-- Insert Main Dishes
+INSERT INTO Items (ItemName, ItemPrice, Category) VALUES
+('Pabellón Criollo', 18.99, 'Dish'),
+('Bandeja Paisa', 19.99, 'Dish'),
+('Ceviche Peruano', 16.99, 'Dish'),
+('Paella Valenciana', 22.99, 'Dish');
+
+-- Insert Beverages
+INSERT INTO Items (ItemName, ItemPrice, Category) VALUES
+('Aguapanela', 4.99, 'Beverage'),
+('Pisco Sour', 10.99, 'Beverage'),
+('Cocada', 5.99, 'Beverage'),
+('Tinto de Verano', 7.99, 'Beverage');
+
+-- Insert Desserts
+INSERT INTO Items (ItemName, ItemPrice, Category) VALUES
+('Alfajores', 6.99, 'Dessert'),
+('Tres Leches', 7.99, 'Dessert'),
+('Arroz con Leche', 5.99, 'Dessert'),
+('Crema Catalana', 8.99, 'Dessert');
+
 DROP TABLE IF EXISTS Payments;
 
 DROP TABLE IF EXISTS Orders;
@@ -90,3 +112,4 @@ DROP TABLE IF EXISTS Customers;
 DROP TABLE IF EXISTS Items;
 
 DROP TABLE IF EXISTS OrderItems;
+

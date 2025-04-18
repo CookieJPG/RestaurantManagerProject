@@ -15,11 +15,11 @@ public class Main {
         DAOCRUDManager daoManager = new DAOCRUDManager();
 
         // Probar cada DAO
-        // testCustomerDAO(daoManager);
-        // testTableDAO(daoManager);
-        // testReservationDAO(daoManager);
+        testCustomerDAO(daoManager);
+        testTableDAO(daoManager);
+        testReservationDAO(daoManager);
         testOrderDAO(daoManager);
-        // testPaymentDAO(daoManager);
+        testPaymentDAO(daoManager);
     }
 
     private static void testCustomerDAO(DAOCRUDManager daoManager) {
@@ -121,9 +121,9 @@ public class Main {
         System.out.println("\n===== Probando Order DAO =====");
 
         // Crear items del menú
-        Dish mainDish = new Dish(1, "Pasta Carbonara", "Regular", 12.99);
-        Beverage drink = new Beverage(1, "Vino Tinto", "Glass", 8.50);
-        Dessert dessert = new Dessert(1, "Tiramisú", "Standard", 6.75);
+        Dish mainDish = new Dish(1, "Pasta Carbonara", "Regular", 12.99); // ID=1 debe existir en DB
+        Beverage drink = new Beverage(5, "Vino Tinto", "Glass", 8.50); // ID=5 (bebida en tu DB)
+        Dessert dessert = new Dessert(9, "Tiramisú", "Standard", 6.75); // ID=9 (postre en tu DB)
         // Crear lista de items para la orden
         ArrayList<ISellable> orderItems = new ArrayList<>();
         orderItems.add(mainDish);
@@ -169,112 +169,133 @@ public class Main {
     private static void testPaymentDAO(DAOCRUDManager daoManager) {
         System.out.println("\n===== Probando Payment DAO =====");
 
-        // 1. First ensure we have a valid order to associate with payment
-        System.out.println("\n--- Preparando datos de prueba ---");
+        // 1. Usar una orden existente específica (cambia el 5 por un ID real de tu BD)
+        Order existingOrder = daoManager.getOrderById(2);
+        if (existingOrder == null) {
+            System.out.println("Error: No existe una orden con ID 5");
+            return;
+        }
+        int existingOrderId = existingOrder.getId();
+        System.out.println("\n--- Buscando orden existente ID: " + existingOrderId + " ---");
 
-        // Create test customer if doesn't exist
+        // Verify customer exists
         Customer customer = daoManager.findCustomerById("3CUST003");
         if (customer == null) {
-            customer = new CTVIP("3CUST003", "Carlos López", "carlos@email.com", "555-9012", 200.0);
-            daoManager.saveCustomer(customer);
-        }
-
-        // Create test table if doesn't exist
-        Table table = new Table(true);
-        daoManager.addTable(table);
-
-        // Create test order with items
-        ArrayList<ISellable> orderItems = new ArrayList<>();
-        orderItems.add(new Dish(1, "Pasta Carbonara", "Regular", 12.99));
-        orderItems.add(new Beverage(1, "Vino Tinto", "Glass", 8.50));
-        orderItems.add(new Dessert(1, "Tiramisú", "Standard", 6.75));
-
-        Order order = new Order(0, 3, customer, orderItems, "Pending", LocalDateTime.now());
-        daoManager.SaveOrder(order);
-        System.out.println("Orden de prueba creada con ID: " + order.getId());
-
-        // 2. Test Payment Creation
-        System.out.println("\n--- Probando creación de pago ---");
-        Payment payment = new Payment(
-                0, // paymentId (0 for new payment)
-                order, // associated order
-                45.23, // amount
-                "Credit Card", // payment method
-                "TXN12345", // transaction ID
-                Status.CONFIRMED, // status
-                LocalDateTime.now() // payment date
-        );
-
-        // !Set points used (simulate customer using loyalty points)
-        // ! payment.getPointsUsed(10);
-
-        Payment createdPayment = daoManager.createPayment(payment);
-        if (createdPayment != null) {
-            System.out.println("Pago creado exitosamente con ID: " + createdPayment.getPaymentId());
-            System.out.println("Detalles del pago:");
-            System.out.println("- Orden ID: " + createdPayment.getOrder().getId());
-            System.out.println("- Método: " + createdPayment.getPaymentMethod());
-            System.out.println("- Monto: $" + createdPayment.getAmount());
-            System.out.println("- Estado: " + createdPayment.getStatus());
-            System.out.println("- Puntos Ganados: " + payment.getPointsGained());
-        } else {
-            System.out.println("Error al crear el pago");
+            System.out.println("Error: Customer with ID 3CUST003 not found");
             return;
         }
 
-        // 3. Test Reading Payment
-        System.out.println("\n--- Probando lectura de pago ---");
-        Payment retrievedPayment = daoManager.readPayment(createdPayment.getPaymentId());
-        if (retrievedPayment != null) {
-            System.out.println("Pago recuperado exitosamente:");
-            System.out.println("- ID: " + retrievedPayment.getPaymentId());
-            System.out.println("- Método: " + retrievedPayment.getPaymentMethod());
-            System.out.println("- Monto: $" + retrievedPayment.getAmount());
-            System.out.println("- Estado: " + retrievedPayment.getStatus());
-            System.out.println("- Fecha: " + retrievedPayment.getPaymentDate());
-
-            // Verify associated order
-            if (retrievedPayment.getOrder() != null) {
-                System.out.println("- Orden asociada ID: " + retrievedPayment.getOrder().getId());
-            } else {
-                System.out.println("Advertencia: No se encontró orden asociada");
-            }
-        } else {
-            System.out.println("Error al recuperar el pago");
+        Order order = daoManager.getOrderById(existingOrderId);
+        if (order == null) {
+            System.out.println("Error: No existe una orden con ID " + existingOrderId);
+            return;
         }
 
-        // 4. Test Loyalty Points Update
-        System.out.println("\n--- Probando actualización de puntos de lealtad ---");
-        Customer updatedCustomer = daoManager.findCustomerById(customer.getId());
-        if (updatedCustomer != null) {
-            System.out.println("Puntos de lealtad actualizados:");
-            System.out.println("- Puntos antes del pago: " + customer.getLoyaltyPoints());
-            System.out.println("- Puntos después del pago: " + updatedCustomer.getLoyaltyPoints());
+        // 2. Verificar items y calcular total
+        System.out.println("\nDetalles de la orden:");
+        System.out.println("- Mesa: " + order.getTableId());
+        System.out.println("- Cliente: " + order.getCustomer().getName());
+        System.out.println("- Estado: " + order.getOrderStatus());
 
-            // Expected points:
-            // Original: 200
-            // Used: -10 (set in payment)
-            // Earned: +4 (45.23 / 10 = 4.523 → truncated to 4)
-            // Expected total: 194
+        System.out.println("\nItems en la orden:");
+        if (order.getOrderItems().isEmpty()) {
+            System.out.println("ADVERTENCIA: La orden no tiene items asociados");
         } else {
-            System.out.println("Error al verificar puntos de lealtad");
+            for (ISellable item : order.getOrderItems()) {
+                System.out.println("- " + item.getName() + ": $" + item.getPrice());
+            }
+        }
+
+        // Mostrar subtotal y descuento
+        double subtotal = order.calculateSubtotal();
+        double discount = order.getDiscountAmount();
+        double orderTotal = order.calculateTotal();
+
+        System.out.println("\n--- Resumen de pago ---");
+        System.out.printf("Subtotal: $%.2f%n", subtotal);
+
+        if (discount > 0) {
+            System.out.printf("Descuento (%s - %.1f%%): -$%.2f%n",
+                    order.getCustomer().getType().toString(),
+                    order.getCustomer().DiscountRate(),
+                    discount);
+        } else {
+            System.out.println("Descuento: No aplica");
+        }
+
+        System.out.printf("Total a pagar: $%.2f%n", orderTotal);
+
+        // 3. Generar el pago
+        System.out.println("\n--- Generando pago ---");
+        Payment payment = new Payment(
+                0, // ID temporal
+                order,
+                orderTotal,
+                "Credit Card",
+                "TXN-" + System.currentTimeMillis(),
+                Status.CONFIRMED,
+                LocalDateTime.now());
+
+        // Capture initial points before payment
+        double initialPoints = customer.getLoyaltyPoints();
+        System.out.printf("- Initial loyalty points: %.1f\n", initialPoints);
+
+        // Crear el pago
+        Payment createdPayment = daoManager.createPayment(payment);
+        if (createdPayment == null) {
+            System.out.println("Error al crear el pago");
+            return;
+        } else {
+            System.out.println("\nPayment created successfully with ID: " + createdPayment.getPaymentId());
+            System.out.println("Payment details:");
+            System.out.println("- Order ID: " + createdPayment.getOrder().getId());
+            System.out.println("- Method: " + createdPayment.getPaymentMethod());
+            System.out.printf("- Amount: $%.2f\n", createdPayment.getAmount());
+            System.out.println("- Status: " + createdPayment.getStatus());
+            System.out.println("- Points Gained: " + createdPayment.getPointsGained());
+        }
+
+        // Actualizar puntos (debería hacerse automáticamente en createPayment)
+        Customer updatedCustomer = daoManager.findCustomerById(customer.getId());
+        System.out.println("- Puntos actuales: " +
+                (updatedCustomer != null ? updatedCustomer.getLoyaltyPoints() : "Error al consultar"));
+
+        // 4. Test Payment Reading
+        System.out.println("\n--- Testing payment retrieval ---");
+        Payment retrievedPayment = daoManager.readPayment(createdPayment.getPaymentId());
+        if (retrievedPayment != null) {
+            System.out.println("Payment retrieved successfully:");
+            System.out.println("- ID: " + retrievedPayment.getPaymentId());
+            System.out.println("- Method: " + retrievedPayment.getPaymentMethod());
+            System.out.printf("- Amount: $%.2f\n", retrievedPayment.getAmount());
+            System.out.println("- Status: " + retrievedPayment.getStatus());
+            System.out.println("- Date: " + retrievedPayment.getPaymentDate());
+
+            if (retrievedPayment.getOrder() != null) {
+                System.out.println("- Associated Order ID: " + retrievedPayment.getOrder().getId());
+            } else {
+                System.out.println("Warning: No associated order found");
+            }
+        } else {
+            System.out.println("Error retrieving payment");
         }
 
         // 5. Test Payment Deletion
-        System.out.println("\n--- Probando eliminación de pago ---");
-        daoManager.deletePayment(createdPayment.getPaymentId());
-        System.out.println("Pago eliminado, verificando...");
+        // System.out.println("\n--- Probando eliminación de pago ---");
+        // daoManager.deletePayment(createdPayment.getPaymentId());
+        // System.out.println("Pago eliminado, verificando...");
 
-        Payment deletedPayment = daoManager.readPayment(createdPayment.getPaymentId());
-        if (deletedPayment == null) {
-            System.out.println("Pago eliminado exitosamente");
-        } else {
-            System.out.println("Error: El pago aún existe después de eliminarlo");
-        }
+        // Payment deletedPayment =
+        // daoManager.readPayment(createdPayment.getPaymentId());
+        // if (deletedPayment == null) {
+        // System.out.println("Pago eliminado exitosamente");
+        // } else {
+        // System.out.println("Error: El pago aún existe después de eliminarlo");
+        // }
 
         // 6. Cleanup (optional)
-        System.out.println("\n--- Limpieza de datos de prueba ---");
-        daoManager.RemoveOrder(order);
-        System.out.println("Datos de prueba eliminados");
+        // System.out.println("\n--- Limpieza de datos de prueba ---");
+        // daoManager.RemoveOrder(order);
+        // System.out.println("Datos de prueba eliminados");
     }
 }

@@ -13,7 +13,7 @@ public class Payment {
     private LocalDateTime paymentDate;
 
     public Payment(int paymentId, Order order, double amount, String paymentMethod, String transactionId, Status status,
-                   LocalDateTime paymentDate) {
+            LocalDateTime paymentDate) {
         this.paymentId = paymentId;
         this.order = order;
         this.setAmount(amount);
@@ -69,13 +69,14 @@ public class Payment {
 
     // Setters
     public void setAmount(double amount) {
-        Customer customer = order.getCustomer();
-        if (customer.getType() == IRewardable.Type.FIRST) {
-            this.amount = amount;
-        } else {
-            double discountAmount = amount * (customer.DiscountRate() / 100);
-            this.amount = amount - discountAmount;
-        }
+        // Customer customer = order.getCustomer();
+        // if (customer.getType() == IRewardable.Type.FIRST) {
+        // this.amount = amount;
+        // } else {
+        // double discountAmount = amount * (customer.DiscountRate() / 100);
+        // this.amount = amount - discountAmount;
+        // }
+        this.amount = amount;
     }
 
     public void setStatus(Status status) {

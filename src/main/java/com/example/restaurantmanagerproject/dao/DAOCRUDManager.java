@@ -21,7 +21,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.time.LocalDateTime;
 import java.sql.Statement;
 import java.sql.Timestamp;
@@ -204,12 +206,15 @@ public class DAOCRUDManager implements DAOReservations, DAOOrders, DAOPayments, 
         return orders;
     }
 
-    // @Override // * Funcionando
+    @Override // * Funcionando
     public boolean SaveOrder(Order order) {
         Connection conn = null;
         ResultSet generatedKeys = null;
+        boolean success = false;
+
         try {
             conn = DbUtil.getConnection();
+            conn.setAutoCommit(false); // Begin transaction
 
             if (order.getId() == 0) {
                 // Insert new order
@@ -217,35 +222,88 @@ public class DAOCRUDManager implements DAOReservations, DAOOrders, DAOPayments, 
                         "INSERT INTO Orders (TableID, CustomerID, Status, OrderDate) VALUES (?, ?, ?, ?)",
                         Statement.RETURN_GENERATED_KEYS);
                 stmt.setInt(1, order.getTableId());
-                stmt.setString(2, order.getCustomer().getId()); // * Se arregla el error si se pone el .getId()
+                stmt.setString(2, order.getCustomer().getId());
                 stmt.setString(3, order.getOrderStatus());
                 stmt.setTimestamp(4, Timestamp.valueOf(order.getOrderDate()));
 
                 int affectedRows = stmt.executeUpdate();
+                if (affectedRows == 0) {
+                    throw new SQLException("Creating order failed, no rows affected.");
+                }
 
-                if (affectedRows > 0) {
-                    generatedKeys = stmt.getGeneratedKeys();
-                    if (generatedKeys.next()) {
-                        order.setId(generatedKeys.getInt(1)); // Set the generated ID
-                    }
+                generatedKeys = stmt.getGeneratedKeys();
+                if (generatedKeys.next()) {
+                    order.setId(generatedKeys.getInt(1));
+                } else {
+                    throw new SQLException("Creating order failed, no ID obtained.");
                 }
             } else {
                 // Update existing order
                 PreparedStatement stmt = conn.prepareStatement(
                         "UPDATE Orders SET TableID = ?, CustomerID = ?, Status = ? WHERE OrderID = ?");
                 stmt.setInt(1, order.getTableId());
-                stmt.setString(2, order.getCustomer().getId()); // * Se arregla el error si se pone el .getId()
+                stmt.setString(2, order.getCustomer() != null ? order.getCustomer().getId() : null);
                 stmt.setString(3, order.getOrderStatus());
                 stmt.setInt(4, order.getId());
-
                 stmt.executeUpdate();
+
+                // Delete old items
+                PreparedStatement deleteStmt = conn.prepareStatement(
+                        "DELETE FROM OrderItems WHERE OrderID = ?");
+                deleteStmt.setInt(1, order.getId());
+                deleteStmt.executeUpdate();
             }
+
+            // Save associated items
+            if (order.getOrderItems() != null && !order.getOrderItems().isEmpty()) {
+                // Group items by ID and count quantities
+                Map<Integer, Integer> itemQuantities = new HashMap<>();
+                for (ISellable item : order.getOrderItems()) {
+                    itemQuantities.merge(item.getId(), 1, Integer::sum);
+                }
+
+                // Insert items in batch
+                PreparedStatement itemStmt = conn.prepareStatement(
+                        "INSERT INTO OrderItems (OrderID, ItemID, Quantity) VALUES (?, ?, ?)");
+
+                for (Map.Entry<Integer, Integer> entry : itemQuantities.entrySet()) {
+                    itemStmt.setInt(1, order.getId());
+                    itemStmt.setInt(2, entry.getKey());
+                    itemStmt.setInt(3, entry.getValue());
+                    itemStmt.addBatch();
+                }
+
+                int[] batchResults = itemStmt.executeBatch();
+                for (int result : batchResults) {
+                    if (result == PreparedStatement.EXECUTE_FAILED) {
+                        throw new SQLException("Failed to insert some order items");
+                    }
+                }
+            }
+
+            conn.commit();
+            success = true;
+
         } catch (SQLException e) {
             System.err.println("Error saving order: " + e.getMessage());
+            try {
+                if (conn != null)
+                    conn.rollback();
+            } catch (SQLException ex) {
+                System.err.println("Error on rollback: " + ex.getMessage());
+            }
         } finally {
+            DbUtil.closeQuietly(generatedKeys);
+            try {
+                if (conn != null)
+                    conn.setAutoCommit(true);
+            } catch (SQLException e) {
+                System.err.println("Error resetting auto-commit: " + e.getMessage());
+            }
             DbUtil.closeQuietly(conn);
         }
-        return false;
+
+        return success;
     }
 
     @Override // * Funcionando
@@ -253,21 +311,42 @@ public class DAOCRUDManager implements DAOReservations, DAOOrders, DAOPayments, 
         Connection conn = null;
         try {
             conn = DbUtil.getConnection();
+            conn.setAutoCommit(false);
 
-            // First delete related OrderItems
-            PreparedStatement deleteItemsStmt = conn.prepareStatement(
+            // 1. Eliminar pagos asociados
+            PreparedStatement deletePayments = conn.prepareStatement(
+                    "DELETE FROM Payments WHERE OrderID = ?");
+            deletePayments.setInt(1, order.getId());
+            deletePayments.executeUpdate();
+
+            // 2. Eliminar items de la orden
+            PreparedStatement deleteItems = conn.prepareStatement(
                     "DELETE FROM OrderItems WHERE OrderID = ?");
-            deleteItemsStmt.setInt(1, order.getId());
-            deleteItemsStmt.executeUpdate();
+            deleteItems.setInt(1, order.getId());
+            deleteItems.executeUpdate();
 
-            // Then delete the order
-            PreparedStatement deleteOrderStmt = conn.prepareStatement(
+            // 3. Eliminar la orden
+            PreparedStatement deleteOrder = conn.prepareStatement(
                     "DELETE FROM Orders WHERE OrderID = ?");
-            deleteOrderStmt.setInt(1, order.getId());
-            deleteOrderStmt.executeUpdate();
+            deleteOrder.setInt(1, order.getId());
+            deleteOrder.executeUpdate();
+
+            conn.commit();
         } catch (SQLException e) {
             System.err.println("Error removing order: " + e.getMessage());
+            try {
+                if (conn != null)
+                    conn.rollback();
+            } catch (SQLException ex) {
+                System.err.println("Error on rollback: " + ex.getMessage());
+            }
         } finally {
+            try {
+                if (conn != null)
+                    conn.setAutoCommit(true);
+            } catch (SQLException e) {
+                System.err.println("Error resetting auto-commit: " + e.getMessage());
+            }
             DbUtil.closeQuietly(conn);
         }
     }
@@ -415,7 +494,8 @@ public class DAOCRUDManager implements DAOReservations, DAOOrders, DAOPayments, 
             // Insertar el pago
             PreparedStatement stmt = conn.prepareStatement(
                     "INSERT INTO Payments (OrderID, Amount, PaymentMethod, TransactionID, Status, PaymentTime) " +
-                            "VALUES (?, ?, ?, ?, ?, ?)");
+                            "VALUES (?, ?, ?, ?, ?, ?)",
+                    Statement.RETURN_GENERATED_KEYS);
 
             stmt.setInt(1, payment.getOrder().getId());
             stmt.setDouble(2, payment.getAmount());
@@ -427,8 +507,28 @@ public class DAOCRUDManager implements DAOReservations, DAOOrders, DAOPayments, 
             int result = stmt.executeUpdate();
 
             if (result > 0) {
+                // Obtener el ID generado
+                try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        payment.setPaymentId(generatedKeys.getInt(1));
+                    }
+                }
                 // Actualizar puntos de lealtad
                 updateCustomerLoyaltyPoints(payment);
+            }
+
+            // 2. Actualizar el estado de la orden SOLO si el pago es CONFIRMED
+            if (payment.getStatus() == Status.CONFIRMED) {
+                PreparedStatement orderStmt = conn.prepareStatement(
+                        "UPDATE Orders SET Status = 'Confirmed' WHERE OrderID = ?");
+                orderStmt.setInt(1, payment.getOrder().getId());
+
+                int orderResult = orderStmt.executeUpdate();
+                if (orderResult == 0) {
+                    conn.rollback();
+                    System.err.println("No se pudo actualizar el estado de la orden");
+                    return null;
+                }
             }
             return payment;
 
@@ -456,7 +556,7 @@ public class DAOCRUDManager implements DAOReservations, DAOOrders, DAOPayments, 
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 // Obtener la orden asociada al pago
-                int orderId = rs.getInt("order_id");
+                int orderId = rs.getInt("Order_ID");
                 Order order = getOrderById(orderId);
 
                 // VALIDACIÓN: Verificar si la orden existe

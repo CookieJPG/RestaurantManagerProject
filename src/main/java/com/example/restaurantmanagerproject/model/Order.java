@@ -82,12 +82,27 @@ public class Order {
         orderItems.remove(item);
     }
 
+    public double calculateSubtotal() {
+        return orderItems.stream()
+                .mapToDouble(ISellable::getPrice)
+                .sum();
+    }
+
     public double calculateTotal() {
-        double total = 0.0;
-        for (ISellable item : orderItems) {
-            total += item.getPrice();
+        double subtotal = calculateSubtotal();
+
+        if (customer != null && customer.getType() != IRewardable.Type.FIRST) {
+            subtotal *= (1 - (customer.DiscountRate() / 100));
         }
-        return total;
+
+        return subtotal;
+    }
+
+    public double getDiscountAmount() {
+        if (customer != null && customer.getType() != IRewardable.Type.FIRST) {
+            return calculateSubtotal() * (customer.DiscountRate() / 100);
+        }
+        return 0.0;
     }
 
     public void updateOrderStatus(String status) {
