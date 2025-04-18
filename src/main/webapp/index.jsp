@@ -1,376 +1,379 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: CookieJPG
-  Date: 25/03/2025
-  Time: 09:32
-  To change this template use File | Settings | File Templates.
---%>
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gourmet Delight Restaurant</title>
     <style>
+        /* Global Styles */
+        :root {
+            --primary-color: #5a3921;
+            --secondary-color: #d4a762;
+            --light-bg: #f8f4e8;
+            --white: #ffffff;
+            --text-color: #333;
+            --shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             line-height: 1.6;
-            color: #333;
+            color: var(--text-color);
             max-width: 1200px;
             margin: 0 auto;
-            padding: 1rem;
+            padding: 0;
             background-color: #fff9f2;
         }
-        h1, h2, h3 {
-            color: #5a3921;
-            margin-top: 2rem;
-        }
-        .container {
+        
+        /* Navigation Bar */
+        .navbar {
+            background-color: var(--primary-color);
+            padding: 1rem 2rem;
             display: flex;
-            flex-wrap: wrap;
-            gap: 2rem;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow);
         }
-        .card {
-            background: #ffffff;
-            border-radius: 8px;
-            padding: 1.5rem;
-            border: 1px solid #e9ecef;
-            flex: 1;
-            min-width: 300px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        
+        .navbar-brand {
+            color: var(--white);
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
         }
-        .form-group {
+        
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+        
+        .nav-links a {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: var(--secondary-color);
+        }
+        
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 5rem 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .hero h1 {
+            color: white;
+            font-size: 3rem;
             margin-bottom: 1rem;
         }
-        label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: bold;
-            color: #5a3921;
+        
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto;
         }
-        input, select, textarea {
+        
+        /* Menu Section */
+        .menu-section {
+            padding: 2rem;
+        }
+        
+        .section-title {
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 2rem;
+        }
+        
+        .menu-category {
+            margin-bottom: 3rem;
+        }
+        
+        .menu-category h2 {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            width: 90%;
+            margin: 0 auto;
+        }
+        
+        .menu-item {
+            background: var(--white);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s;
+        }
+        
+        .menu-item:hover {
+            transform: translateY(-5px);
+        }
+        
+        .menu-item-img {
             width: 100%;
-            padding: 0.5rem;
-            border: 1px solid #ced4da;
-            border-radius: 4px;
-            font-size: 16px;
+            height: 200px;
+            object-fit: cover;
         }
-        button {
-            background: #d4a762;
+        
+        .menu-item-content {
+            padding: 1rem;
+        }
+        
+        .menu-item-title {
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .menu-item-desc {
+            color: var(--text-color);
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+        
+        .menu-item-price {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+        }
+        
+        .price {
+            font-weight: bold;
+            color: var(--secondary-color);
+        }
+        
+        .add-to-order {
+            background: var(--secondary-color);
             color: white;
             border: none;
             padding: 0.5rem 1rem;
             border-radius: 4px;
             cursor: pointer;
-            font-size: 16px;
             transition: background 0.3s;
         }
-        button:hover {
+        
+        .add-to-order:hover {
             background: #b38b4a;
         }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1rem;
-        }
-        th, td {
-            padding: 0.75rem;
-            text-align: left;
-            border-bottom: 1px solid #e9ecef;
-        }
-        th {
-            background-color: #f8f4e8;
-            color: #5a3921;
-        }
-        .menu-item {
-            display: flex;
-            margin-bottom: 1.5rem;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 1rem;
-        }
-        .menu-item-img {
-            width: 120px;
-            height: 120px;
-            object-fit: cover;
-            border-radius: 8px;
-            margin-right: 1rem;
-        }
-        .menu-item-details {
-            flex: 1;
-        }
-        .menu-item-title {
-            font-weight: bold;
-            font-size: 1.2rem;
-            color: #5a3921;
-            margin-bottom: 0.5rem;
-        }
-        .menu-item-price {
-            font-weight: bold;
-            color: #d4a762;
-        }
-        .order-summary {
-            background: #f8f4e8;
-            padding: 1.5rem;
-            border-radius: 8px;
-            margin-top: 2rem;
-        }
-        .status-pending {
-            color: #e67e22;
-        }
-        .status-completed {
-            color: #27ae60;
-        }
-        .status-cancelled {
-            color: #e74c3c;
-        }
-        .hero {
-            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4');
-            background-size: cover;
-            color: white;
-            padding: 4rem 2rem;
+        
+        /* Footer */
+        .footer {
+            background-color: var(--primary-color);
+            color: var(--white);
             text-align: center;
-            border-radius: 8px;
-            margin-bottom: 2rem;
+            padding: 1.5rem;
+            margin-top: 3rem;
         }
-        .hero h1 {
-            color: white;
-            font-size: 2.5rem;
+        
+        /* Utility Classes */
+        .container {
+            padding: 0 2rem;
         }
     </style>
 </head>
 <body>
-<div class="hero">
-    <h1>🍽️ Gourmet Delight Restaurant</h1>
-    <p>Fine dining experience with exquisite flavors</p>
-</div>
-
-<!-- Display Menu Items -->
-<h2>Our Menu 🍴</h2>
-<c:choose>
-    <c:when test="${empty restaurantManager.menuItems}">
-        <p>Our menu is currently being updated. Please check back later.</p>
-    </c:when>
-    <c:otherwise>
-        <div class="menu-container">
-            <c:forEach var="item" items="${restaurantManager.menuItems}">
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <a href="#" class="navbar-brand">Gourmet Delight</a>
+        <div class="nav-links">
+            <a href="#orders">Orders</a>
+            <a href="#stats">Statistics</a>
+            <a href="#add-item">Add Item</a>
+        </div>
+    </nav>
+    
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>🍽️ Latin & Spanish Cuisine</h1>
+        <p>Experience authentic flavors from Colombia, Peru, Venezuela, and Spain</p>
+    </section>
+    
+    <!-- Menu Section -->
+    <section class="menu-section">
+        <h1 class="section-title">Our Menu 🍴</h1>
+        
+        <!-- Main Dishes -->
+        <div class="menu-category">
+            <h2>Main Courses</h2>
+            <div class="menu-grid">
+                <!-- Pabellón Criollo -->
                 <div class="menu-item">
-                    <img src="${item.imageUrl}" alt="${item.name}" class="menu-item-img" onerror="this.src='https://via.placeholder.com/120?text=Food'">
-                    <div class="menu-item-details">
-                        <div class="menu-item-title">${item.name}</div>
-                        <div class="menu-item-description">${item.description}</div>
-                        <div class="menu-item-price">$${String.format("%.2f", item.price)}</div>
-                        <div>
-                            <form action="${pageContext.request.contextPath}/restaurant" method="post" style="display: inline;">
-                                <input type="hidden" name="action" value="addToOrder">
-                                <input type="hidden" name="itemId" value="${item.id}">
-                                <button type="submit">Add to Order</button>
-                            </form>
+                    <img src="https://images.unsplash.com/photo-1601050690597-df0568f70950" alt="Pabellón Criollo" class="menu-item-img">
+                    <div class="menu-item-content">
+                        <h3 class="menu-item-title">Pabellón Criollo</h3>
+                        <p class="menu-item-desc">Venezuela's national dish: shredded beef, black beans, rice, and fried plantains</p>
+                        <div class="menu-item-price">
+                            <span class="price">$18.99</span>
                         </div>
                     </div>
                 </div>
-            </c:forEach>
+                
+                <!-- Bandeja Paisa -->
+                <div class="menu-item">
+                    <img src="https://images.unsplash.com/photo-1639664144075-9dafc7d0b9c5" alt="Bandeja Paisa" class="menu-item-img">
+                    <div class="menu-item-content">
+                        <h3 class="menu-item-title">Bandeja Paisa</h3>
+                        <p class="menu-item-desc">Colombian platter with beans, rice, chorizo, chicharrón, avocado, plantain, and arepa</p>
+                        <div class="menu-item-price">
+                            <span class="price">$19.99</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Ceviche -->
+                <div class="menu-item">
+                    <img src="https://images.unsplash.com/photo-1611143669185-af224c5e0102" alt="Ceviche Peruano" class="menu-item-img">
+                    <div class="menu-item-content">
+                        <h3 class="menu-item-title">Ceviche Peruano</h3>
+                        <p class="menu-item-desc">Peruvian classic: fresh fish marinated in lime juice with red onions, cilantro, and ají</p>
+                        <div class="menu-item-price">
+                            <span class="price">$16.99</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Paella -->
+                <div class="menu-item">
+                    <img src="https://images.unsplash.com/photo-1625938144745-fdc08a7b8b1b" alt="Paella Valenciana" class="menu-item-img">
+                    <div class="menu-item-content">
+                        <h3 class="menu-item-title">Paella Valenciana</h3>
+                        <p class="menu-item-desc">Spain's iconic saffron rice dish with seafood, chicken, and vegetables</p>
+                        <div class="menu-item-price">
+                            <span class="price">$22.99</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </c:otherwise>
-</c:choose>
-
-<!-- Current Order Summary -->
-<c:if test="${not empty restaurantManager.currentOrder}">
-    <div class="order-summary">
-        <h2>Your Order 🛒</h2>
-        <table>
-            <thead>
-            <tr>
-                <th>Item</th>
-                <th>Quantity</th>
-                <th>Price</th>
-                <th>Subtotal</th>
-                <th>Action</th>
-            </tr>
-            </thead>
-            <tbody>
-            <c:forEach var="orderItem" items="${restaurantManager.currentOrder.items}">
-                <tr>
-                    <td>${orderItem.menuItem.name}</td>
-                    <td>${orderItem.quantity}</td>
-                    <td>$${String.format("%.2f", orderItem.menuItem.price)}</td>
-                    <td>$${String.format("%.2f", orderItem.menuItem.price * orderItem.quantity)}</td>
-                    <td>
-                        <form action="${pageContext.request.contextPath}/restaurant" method="post" style="display: inline;">
-                            <input type="hidden" name="action" value="removeFromOrder">
-                            <input type="hidden" name="itemId" value="${orderItem.menuItem.id}">
-                            <button type="submit" style="background: #e74c3c;">Remove</button>
-                        </form>
-                    </td>
-                </tr>
-            </c:forEach>
-            </tbody>
-            <tfoot>
-            <tr>
-                <td colspan="3" style="text-align: right;"><strong>Total:</strong></td>
-                <td><strong>$${String.format("%.2f", restaurantManager.currentOrder.total)}</strong></td>
-                <td></td>
-            </tr>
-            </tfoot>
-        </table>
-
-        <form action="${pageContext.request.contextPath}/restaurant" method="post">
-            <input type="hidden" name="action" value="placeOrder">
-            <div class="form-group">
-                <label for="customerName">Your Name:</label>
-                <input type="text" id="customerName" name="customerName" required>
+        
+        <!-- Beverages -->
+        <div class="menu-category">
+            <h2>Beverages</h2>
+            <div class="menu-grid">
+                <!-- Aguapanela -->
+                <div class="menu-item">
+                    <img src="https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd" alt="Aguapanela" class="menu-item-img">
+                    <div class="menu-item-content">
+                        <h3 class="menu-item-title">Aguapanela</h3>
+                        <p class="menu-item-desc">Colombian comfort drink made from panela (unrefined sugar) with lime</p>
+                        <div class="menu-item-price">
+                            <span class="price">$4.99</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Pisco Sour -->
+                <div class="menu-item">
+                    <img src="https://images.unsplash.com/photo-1551751299-1b51cab2694c" alt="Pisco Sour" class="menu-item-img">
+                    <div class="menu-item-content">
+                        <h3 class="menu-item-title">Pisco Sour</h3>
+                        <p class="menu-item-desc">Peru's national cocktail with pisco, lime juice, syrup, egg white, and bitters</p>
+                        <div class="menu-item-price">
+                            <span class="price">$10.99</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Cocada -->
+                <div class="menu-item">
+                    <img src="https://images.unsplash.com/photo-1601050690117-94f5f6fa1bd0" alt="Cocada" class="menu-item-img">
+                    <div class="menu-item-content">
+                        <h3 class="menu-item-title">Cocada</h3>
+                        <p class="menu-item-desc">Venezuelan refreshing coconut milk drink, often served with condensed milk</p>
+                        <div class="menu-item-price">
+                            <span class="price">$5.99</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Tinto de Verano -->
+                <div class="menu-item">
+                    <img src="https://images.unsplash.com/photo-1470337458703-46ad1756a187" alt="Tinto de Verano" class="menu-item-img">
+                    <div class="menu-item-content">
+                        <h3 class="menu-item-title">Tinto de Verano</h3>
+                        <p class="menu-item-desc">Spanish summer drink: red wine mixed with lemon soda over ice</p>
+                        <div class="menu-item-price">
+                            <span class="price">$7.99</span>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label for="customerPhone">Phone Number:</label>
-                <input type="tel" id="customerPhone" name="customerPhone" required>
-            </div>
-            <div class="form-group">
-                <label for="deliveryAddress">Delivery Address (if delivery):</label>
-                <input type="text" id="deliveryAddress" name="deliveryAddress">
-            </div>
-            <div class="form-group">
-                <label for="orderType">Order Type:</label>
-                <select id="orderType" name="orderType" required>
-                    <option value="DINE_IN">Dine In</option>
-                    <option value="TAKEOUT">Takeout</option>
-                    <option value="DELIVERY">Delivery</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="specialInstructions">Special Instructions:</label>
-                <textarea id="specialInstructions" name="specialInstructions" rows="3"></textarea>
-            </div>
-            <button type="submit" style="background: #27ae60;">Place Order</button>
-            <button type="submit" formaction="${pageContext.request.contextPath}/restaurant?action=clearOrder" style="background: #e74c3c; margin-left: 1rem;">Clear Order</button>
-        </form>
-    </div>
-</c:if>
-
-<!-- Display Orders -->
-<h2>Order Management 📋</h2>
-<c:choose>
-    <c:when test="${empty restaurantManager.allOrders}">
-        <p>No orders placed yet.</p>
-    </c:when>
-    <c:otherwise>
-        <table>
-            <thead>
-            <tr>
-                <th>Order ID</th>
-                <th>Customer</th>
-                <th>Items</th>
-                <th>Total</th>
-                <th>Type</th>
-                <th>Status</th>
-                <th>Actions</th>
-            </tr>
-            </thead>
-            <tbody>
-            <c:forEach var="order" items="${restaurantManager.allOrders}">
-                <tr>
-                    <td>#${order.id}</td>
-                    <td>${order.customerName}</td>
-                    <td>
-                        <c:forEach var="item" items="${order.items}" varStatus="status">
-                            ${item.menuItem.name} (x${item.quantity})${!status.last ? ', ' : ''}
-                        </c:forEach>
-                    </td>
-                    <td>$${String.format("%.2f", order.total)}</td>
-                    <td>${order.orderType}</td>
-                    <td class="status-${order.status.toLowerCase()}">${order.status}</td>
-                    <td>
-                        <c:if test="${order.status == 'PENDING'}">
-                            <form action="${pageContext.request.contextPath}/restaurant" method="post" style="display: inline;">
-                                <input type="hidden" name="action" value="updateOrderStatus">
-                                <input type="hidden" name="orderId" value="${order.id}">
-                                <input type="hidden" name="status" value="COMPLETED">
-                                <button type="submit" style="background: #27ae60; padding: 0.3rem 0.6rem; font-size: 0.9rem;">Complete</button>
-                            </form>
-                            <form action="${pageContext.request.contextPath}/restaurant" method="post" style="display: inline;">
-                                <input type="hidden" name="action" value="updateOrderStatus">
-                                <input type="hidden" name="orderId" value="${order.id}">
-                                <input type="hidden" name="status" value="CANCELLED">
-                                <button type="submit" style="background: #e74c3c; padding: 0.3rem 0.6rem; font-size: 0.9rem;">Cancel</button>
-                            </form>
-                        </c:if>
-                    </td>
-                </tr>
-            </c:forEach>
-            </tbody>
-        </table>
-    </c:otherwise>
-</c:choose>
-
-<div class="container">
-    <!-- Add Menu Item Form -->
-    <div class="card">
-        <h2>Add Menu Item 🍲</h2>
-        <form action="${pageContext.request.contextPath}/restaurant" method="post" enctype="multipart/form-data">
-            <input type="hidden" name="action" value="addMenuItem">
-
-            <div class="form-group">
-                <label for="itemName">Item Name:</label>
-                <input type="text" id="itemName" name="itemName" required>
-            </div>
-
-            <div class="form-group">
-                <label for="itemDescription">Description:</label>
-                <textarea id="itemDescription" name="itemDescription" rows="3" required></textarea>
-            </div>
-
-            <div class="form-group">
-                <label for="itemPrice">Price:</label>
-                <input type="number" id="itemPrice" name="itemPrice" min="0" step="0.01" required>
-            </div>
-
-            <div class="form-group">
-                <label for="itemCategory">Category:</label>
-                <select id="itemCategory" name="itemCategory" required>
-                    <option value="APPETIZER">Appetizer</option>
-                    <option value="MAIN_COURSE">Main Course</option>
-                    <option value="DESSERT">Dessert</option>
-                    <option value="BEVERAGE">Beverage</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="itemImage">Image:</label>
-                <input type="file" id="itemImage" name="itemImage" accept="image/*">
-            </div>
-
-            <button type="submit">Add Menu Item</button>
-        </form>
-    </div>
-
-    <!-- Restaurant Statistics -->
-    <div class="card">
-        <h2>Restaurant Stats 📊</h2>
-        <div style="margin-bottom: 1rem;">
-            <strong>Total Orders:</strong> ${restaurantManager.totalOrders}
         </div>
-        <div style="margin-bottom: 1rem;">
-            <strong>Revenue Today:</strong> $${String.format("%.2f", restaurantManager.revenueToday)}
+        
+        <!-- Desserts -->
+        <div class="menu-category">
+            <h2>Desserts</h2>
+            <div class="menu-grid">
+                <!-- Alfajores -->
+                <div class="menu-item">
+                    <img src="https://images.unsplash.com/photo-1616683690536-578b5f5ee5a8" alt="Alfajores" class="menu-item-img">
+                    <div class="menu-item-content">
+                        <h3 class="menu-item-title">Alfajores</h3>
+                        <p class="menu-item-desc">Peruvian delicate shortbread cookies filled with dulce de leche</p>
+                        <div class="menu-item-price">
+                            <span class="price">$6.99</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Tres Leches -->
+                <div class="menu-item">
+                    <img src="https://images.unsplash.com/photo-1563805042-7684c019e1cb" alt="Tres Leches" class="menu-item-img">
+                    <div class="menu-item-content">
+                        <h3 class="menu-item-title">Tres Leches</h3>
+                        <p class="menu-item-desc">Venezuelan moist cake soaked in three kinds of milk</p>
+                        <div class="menu-item-price">
+                            <span class="price">$7.99</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Arroz con Leche -->
+                <div class="menu-item">
+                    <img src="https://images.unsplash.com/photo-1601050690117-94f5f6fa1bd0" alt="Arroz con Leche" class="menu-item-img">
+                    <div class="menu-item-content">
+                        <h3 class="menu-item-title">Arroz con Leche</h3>
+                        <p class="menu-item-desc">Colombian creamy rice pudding with cinnamon and raisins</p>
+                        <div class="menu-item-price">
+                            <span class="price">$5.99</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Crema Catalana -->
+                <div class="menu-item">
+                    <img src="https://images.unsplash.com/photo-1558312651-5b0c0c4b58b2" alt="Crema Catalana" class="menu-item-img">
+                    <div class="menu-item-content">
+                        <h3 class="menu-item-title">Crema Catalana</h3>
+                        <p class="menu-item-desc">Spain's version of crème brûlée with lemon and cinnamon flavors</p>
+                        <div class="menu-item-price">
+                            <span class="price">$8.99</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div style="margin-bottom: 1rem;">
-            <strong>Most Popular Item:</strong>
-            <c:choose>
-                <c:when test="${not empty restaurantManager.mostPopularItem}">
-                    ${restaurantManager.mostPopularItem.name} (${restaurantManager.mostPopularItemCount} orders)
-                </c:when>
-                <c:otherwise>
-                    N/A
-                </c:otherwise>
-            </c:choose>
-        </div>
-        <div>
-            <strong>Pending Orders:</strong> ${restaurantManager.pendingOrdersCount}
-        </div>
-    </div>
-</div>
-
-<div class="tip" style="background: #f8f4e8; padding: 1rem; border-radius: 4px; margin: 1rem 0;">
-    <strong>Tip:</strong> Our kitchen is open from 11:00 AM to 10:00 PM daily. Delivery available within 5 miles!
-</div>
+    </section>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <p>Our kitchen is open from 11 AM to 10 PM everyday</p>
+    </footer>
 </body>
 </html>
