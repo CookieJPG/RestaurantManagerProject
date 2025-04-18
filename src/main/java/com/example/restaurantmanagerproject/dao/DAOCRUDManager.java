@@ -205,7 +205,7 @@ public class DAOCRUDManager implements DAOReservations, DAOOrders, DAOPayments, 
     }
 
     @Override // * Funcionando
-    public void SaveOrder(Order order) {
+    public boolean SaveOrder(Order order) {
         Connection conn = null;
         ResultSet generatedKeys = null;
         try {
@@ -245,6 +245,7 @@ public class DAOCRUDManager implements DAOReservations, DAOOrders, DAOPayments, 
         } finally {
             DbUtil.closeQuietly(conn);
         }
+        return false;
     }
 
     @Override // * Funcionando

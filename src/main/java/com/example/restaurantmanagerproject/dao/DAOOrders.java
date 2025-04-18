@@ -9,7 +9,7 @@ public interface DAOOrders {
     // CRUD operations for orders
     List<Order> getAllOrders();
 
-    void SaveOrder(Order order); // Save or update order
+    boolean SaveOrder(Order order); // Save or update order
 
     void RemoveOrder(Order order);
 
