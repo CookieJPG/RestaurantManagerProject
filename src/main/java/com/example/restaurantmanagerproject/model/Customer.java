@@ -5,6 +5,9 @@ import java.util.Base64;
 import java.util.Objects;
 
 public abstract class Customer implements IRewardable {
+    /** Unique char(12)
+     * @
+     */
     private String id;
     private String name;
     private Type type;
@@ -12,7 +15,16 @@ public abstract class Customer implements IRewardable {
     private String phone;
     private double loyaltyPoints;
 
-    // Constructor for creating a customer with an ID
+    /**
+     * {@summary Builds a Customer that already exists specifically.}
+     * <p>This constructor builds a {@code Customer} ignoring the unique ID constraint.</p>
+     * <p>
+     *     This constructor should only be used to instantiate objects built from the database.
+     *     <br/>
+     *     <span style="color: red">DO NOT USE THIS OUTSIDE DATABASE OPERATIONS</span>
+     * </p>
+     * @param id
+     */
     public Customer(String id, String name, Type type, String email, String phone, double loyaltyPoints) {
         this.id = id;
         this.name = name;

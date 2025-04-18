@@ -13,10 +13,10 @@ public class Payment {
     private LocalDateTime paymentDate;
 
     public Payment(int paymentId, Order order, double amount, String paymentMethod, String transactionId, Status status,
-            LocalDateTime paymentDate) {
+                   LocalDateTime paymentDate) {
         this.paymentId = paymentId;
         this.order = order;
-        this.amount = amount;
+        this.setAmount(amount);
         this.paymentMethod = paymentMethod;
         this.transactionId = transactionId;
         this.status = status;

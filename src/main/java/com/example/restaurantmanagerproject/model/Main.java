@@ -15,11 +15,12 @@ public class Main {
         DAOCRUDManager daoManager = new DAOCRUDManager();
 
         // Probar cada DAO
-        // testCustomerDAO(daoManager);
-        // testTableDAO(daoManager);
-        // testReservationDAO(daoManager);
-        // testOrderDAO(daoManager);
-        testPaymentDAO(daoManager);
+//         testCustomerDAO(daoManager);
+//         testTableDAO(daoManager);
+//         testReservationDAO(daoManager);
+//         testOrderDAO(daoManager);
+//         testPaymentDAO(daoManager);
+//         TestPoints(daoManager);
     }
 
     private static void testCustomerDAO(DAOCRUDManager daoManager) {
@@ -179,6 +180,8 @@ public class Main {
             daoManager.saveCustomer(customer);
         }
 
+        // Probando añadir Loyalty Points
+
         // Create test table if doesn't exist
         Table table = new Table(true);
         daoManager.addTable(table);
@@ -198,15 +201,12 @@ public class Main {
         Payment payment = new Payment(
                 0, // paymentId (0 for new payment)
                 order, // associated order
-                45.23, // amount
-                "Credit Card", // payment method
+                44.99, // amount
+                "Loyalty Points", // payment method
                 "TXN12345", // transaction ID
                 Status.CONFIRMED, // status
                 LocalDateTime.now() // payment date
         );
-
-        // !Set points used (simulate customer using loyalty points)
-        // ! payment.getPointsUsed(10);
 
         Payment createdPayment = daoManager.createPayment(payment);
         if (createdPayment != null) {
@@ -252,10 +252,10 @@ public class Main {
             System.out.println("- Puntos después del pago: " + updatedCustomer.getLoyaltyPoints());
 
             // Expected points:
-            // Original: 200
-            // Used: -10 (set in payment)
-            // Earned: +4 (45.23 / 10 = 4.523 → truncated to 4)
-            // Expected total: 194
+            // Original: 1000
+            // Used: None
+            // Earned: 447
+            // Expected total: 647
         } else {
             System.out.println("Error al verificar puntos de lealtad");
         }
@@ -276,5 +276,47 @@ public class Main {
         System.out.println("\n--- Limpieza de datos de prueba ---");
         daoManager.RemoveOrder(order);
         System.out.println("Datos de prueba eliminados");
+    }
+
+    public static void TestPoints(DAOCRUDManager daoManager) {
+        List<Customer> customers = daoManager.findAllCustomers();
+
+        for (Customer customer : customers) {
+            System.out.println("ID: " + customer.getId());
+            System.out.println("Nombre: " + customer.getName());
+            System.out.println("Tipo: " + customer.getType());
+            System.out.println("Puntos: " + customer.getLoyaltyPoints());
+            System.out.println();
+        }
+
+        customers.get(0).addLoyaltyPoints(100);
+
+        System.out.println();
+        System.out.println(customers.get(0).getLoyaltyPoints());
+
+        customers.get(0).removeLoyaltyPoints(100);
+        System.out.println();
+        System.out.println(customers.get(0).getLoyaltyPoints());
+
+        List<Order> orders = daoManager.getAllOrders();
+        System.out.println(orders.get(1).getCustomer().getId());
+
+        System.out.println("\n--- Probando creación de pago ---");
+        Payment payment = new Payment(
+                0, // paymentId (0 for new payment)
+                orders.get(1), // associated order
+                45.23, // amount
+                "Credit Card", // payment method
+                "TXN12345", // transaction ID
+                Status.CONFIRMED, // status
+                LocalDateTime.now() // payment date
+        );
+
+        System.out.println(payment.getAmount());
+        System.out.println(payment.getPointsGained());
+        // Customer Gained 447 points from this Payment
+        System.out.println(customers.get(1).getId());
+        customers.get(1).addLoyaltyPoints(payment.getPointsGained());
+        System.out.println(customers.get(1).getLoyaltyPoints());
     }
 }

@@ -25,6 +25,7 @@ import java.util.List;
 import java.time.LocalDateTime;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.util.Objects;
 
 public class DAOCRUDManager implements DAOReservations, DAOOrders, DAOPayments, DAOTable, DAOCustomer {
 
@@ -536,8 +537,8 @@ public class DAOCRUDManager implements DAOReservations, DAOOrders, DAOPayments, 
             conn = DbUtil.getConnection();
             Customer customer = payment.getCustomer();
 
-            // 1. Agregar puntos ganados (1 punto por cada $10 gastados)
-            int pointsEarned = (int) (payment.getAmount() / 10.0);
+            // 1. Agregar puntos ganados
+            int pointsEarned = payment.getPointsGained();
             if (pointsEarned > 0) {
                 PreparedStatement stmt = conn.prepareStatement(
                         "UPDATE Customers SET LoyaltyPoints = LoyaltyPoints + ? WHERE CustomerID = ?");
@@ -549,10 +550,10 @@ public class DAOCRUDManager implements DAOReservations, DAOOrders, DAOPayments, 
             }
 
             // 2. Restar puntos usados (si aplica)
-            if (payment.getPointsGained() > 0) {
+            if (Objects.equals(payment.getPaymentMethod(), "Loyalty Points")) {
                 PreparedStatement stmt = conn.prepareStatement(
                         "UPDATE Customers SET LoyaltyPoints = LoyaltyPoints - ? WHERE CustomerID = ?");
-                stmt.setInt(1, payment.getPointsGained());
+                stmt.setInt(1, (int) payment.getAmount() * 1000);
                 stmt.setString(2, customer.getId());
                 stmt.executeUpdate();
 
