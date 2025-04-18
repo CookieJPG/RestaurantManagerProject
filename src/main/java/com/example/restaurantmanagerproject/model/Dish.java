@@ -7,6 +7,7 @@ package com.example.restaurantmanagerproject.model;
  */
 public class Dish implements ISellable {
     // Private member variables
+    private int id;
     private String name;
     private double price;
 
@@ -15,16 +16,22 @@ public class Dish implements ISellable {
      */
 
     public Dish() {
+        this.id = 0;
         this.name = ""; // Default name
         this.price = 0.0; // Default price
     }
 
-    public Dish(String Name, String string, double price) {
+    public Dish(int id, String Name, String string, double price) {
+        this.id = id;
         this.name = Name;
         this.price = price;
     }
 
     // Getter and Setter methods
+
+    public int getId() {
+        return id;
+    }
 
     public String getName() {
         return name;

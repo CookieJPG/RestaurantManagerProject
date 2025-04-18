@@ -133,11 +133,11 @@ public class DAOCRUDManager implements DAOReservations, DAOOrders, DAOPayments, 
             String category) {
         switch (category.toLowerCase()) {
             case "dessert":
-                return new Dessert(name, "Standard", price); // Asume tamaño estándar
+                return new Dessert(id, name, "Standard", price); // Asume tamaño estándar
             case "dish":
-                return new Dish(name, "Regular", price); // Asume tamaño regular
+                return new Dish(id, name, "Regular", price); // Asume tamaño regular
             case "beverage":
-                return new Beverage(name, "Medium", price); // Asume tamaño mediano
+                return new Beverage(id, name, "Medium", price); // Asume tamaño mediano
             default:
                 // Throw an exception or handle the error as needed
                 return null; // Optionally return null or throw an exception
@@ -204,7 +204,7 @@ public class DAOCRUDManager implements DAOReservations, DAOOrders, DAOPayments, 
         return orders;
     }
 
-    @Override // * Funcionando
+    // @Override // * Funcionando
     public boolean SaveOrder(Order order) {
         Connection conn = null;
         ResultSet generatedKeys = null;

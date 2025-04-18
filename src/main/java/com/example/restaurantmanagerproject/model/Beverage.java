@@ -10,6 +10,7 @@ package com.example.restaurantmanagerproject.model;
 
 public class Beverage implements ISellable {
     // Private member variables to encapsulate the data
+    private int id;
     private String name;
     private String size;
     private double price;
@@ -18,6 +19,7 @@ public class Beverage implements ISellable {
      * Creates a beverage with default values
      */
     public Beverage() {
+        this.id = 0; // Default ID
         this.name = "";
         this.size = "Medium"; // Default size
         this.price = 0.0;
@@ -26,13 +28,18 @@ public class Beverage implements ISellable {
     /**
      * Creates a beverage with specified values
      */
-    public Beverage(String name, String size, double price) {
+    public Beverage(int id, String name, String size, double price) {
+        this.id = id;
         this.name = name;
         this.size = size;
         this.price = price;
     }
 
     // Name getter/setter
+    public int getId() {
+        return id;
+    }
+
     public String getName() {
         return name;
     }

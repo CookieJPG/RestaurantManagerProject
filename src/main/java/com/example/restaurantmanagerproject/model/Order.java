@@ -22,17 +22,6 @@ public class Order {
         this.orderDate = orderDate;
     }
 
-    // Constructor for creating an order with a LocalDateTime object to the database
-    // public Order(int orderId, int tableId2, String customerId, String status,
-    // LocalDateTime orderDate2) {
-    // // this.id = String.valueOf(orderId);
-    // // this.tableId = tableId2;
-    // // this.customer = new Customer(customerId, Type.Regular);
-    // // this.orderStatus = status;
-    // // this.orderDate = orderDate2;
-    // // this.orderItems = new ArrayList<ISellable>();
-    // }
-
     // Getters
     public int getId() {
         return id;

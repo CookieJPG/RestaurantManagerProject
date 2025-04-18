@@ -7,6 +7,7 @@ package com.example.restaurantmanagerproject.model;
  */
 public class Dessert implements ISellable {
     // Private member variables
+    private int id; // Unique identifier for the dessert
     private String name;
     private String size;
     private double price;
@@ -15,6 +16,7 @@ public class Dessert implements ISellable {
      * Default constructor - creates a dessert with default values
      */
     public Dessert() {
+        this.id = 0;
         this.name = "";
         this.size = ""; // Default size
         this.price = 0.0; // Default price
@@ -27,13 +29,18 @@ public class Dessert implements ISellable {
      * @param size  Serving size (e.g., "Single", "Double", "Shareable")
      * @param price Price in local currency
      */
-    public Dessert(String name, String size, double price) {
+    public Dessert(int id, String name, String size, double price) {
+        this.id = id;
         this.name = name;
         this.size = size;
         this.price = price;
     }
 
     // Getter and Setter methods
+
+    public int getId() {
+        return id;
+    }
 
     public String getName() {
         return name;
