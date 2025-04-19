@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order Management - Gourmet Delight</title>
+    <title>Summary - Gourmet Delight</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/RestoOrders.css">
     <style>
         /* Global Styles */
         :root {
@@ -286,22 +288,30 @@
         .clear-search:hover {
             background: #f1b0b7;
         }
+
+        .nav-links a.active {
+            color: var(--secondary-color);
+            border-bottom: 2px solid var(--secondary-color);
+        }
+
     </style>
 </head>
 <body>
     <!-- Navigation Bar -->
     <nav class="navbar">
-        <a href="index.html" class="navbar-brand">Gourmet Delight</a>
+        <a href="index.jsp" class="navbar-brand">Gourmet Delight</a>
         <div class="nav-links">
-            <a href="orders.html">Orders</a>
-            <a href="#stats">Statistics</a>
-            <a href="#add-item">Add Item</a>
+            <a href="index.jsp">MENU</a>
+            <a href="RestoCreateOrder.jsp">ORDERS</a>
+            <a href="RestoOrders.jsp">SUMMARY</a>
+            <a href="RestoPay.jsp">PAYMENTS</a>
+            <a href="RestoReserv.jsp">RESERVATIONS</a>
         </div>
     </nav>
     
     <!-- Hero Section -->
     <section class="hero">
-        <h1>📋 Order Management</h1>
+        <h1>&#127860 Order Management</h1>
         <p>View and manage all customer orders in real-time</p>
     </section>
     

@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Payment Management - Gourmet Delight</title>
+    <title>Payment - Gourmet Delight</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/RestoPay.css">
     <style>
         /* Global Styles */
         :root {
@@ -227,22 +229,30 @@
             padding: 1.5rem;
             margin-top: 3rem;
         }
+
+        .nav-links a.active {
+            color: var(--secondary-color);
+            border-bottom: 2px solid var(--secondary-color);
+        }
+
     </style>
 </head>
 <body>
     <!-- Navigation Bar -->
     <nav class="navbar">
-        <a href="index.html" class="navbar-brand">Gourmet Delight</a>
+        <a href="index.jsp" class="navbar-brand">Gourmet Delight</a>
         <div class="nav-links">
-            <a href="orders.html">Orders</a>
-            <a href="payments.html">Payments</a>
-            <a href="#stats">Statistics</a>
+            <a href="index.jsp">MENU</a>
+            <a href="RestoCreateOrder.jsp">ORDERS</a>
+            <a href="RestoOrders.jsp">SUMMARY</a>
+            <a href="RestoPay.jsp">PAYMENTS</a>
+            <a href="RestoReserv.jsp">RESERVATIONS</a>
         </div>
     </nav>
     
     <!-- Hero Section -->
     <section class="hero">
-        <h1>💳 Payment Management</h1>
+        <h1>&#127860 Payment Management</h1>
         <p>Register and track all customer payments in one place</p>
     </section>
     

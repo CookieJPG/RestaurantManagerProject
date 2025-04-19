@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Table Reservations - Gourmet Delight</title>
+    <title>Reservations - Gourmet Delight</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/RestoReserv.css">
     <style>
         :root {
             --primary-color: #5a3921;
@@ -226,23 +228,30 @@
             gap: 1rem;
             grid-column: span 2;
         }
+
+        .nav-links a.active {
+            color: var(--secondary-color);
+            border-bottom: 2px solid var(--secondary-color);
+        }
 		
     </style>
 </head>
 <body>
     <!-- Navigation Bar -->
     <nav class="navbar">
-        <a href="index.html" class="navbar-brand">Gourmet Delight</a>
+        <a href="index.jsp" class="navbar-brand">Gourmet Delight</a>
         <div class="nav-links">
-            <a href="orders.html">Orders</a>
-            <a href="payments.html">Payments</a>
-            <a href="reservations.html">Reservations</a>
+            <a href="index.jsp">MENU</a>
+            <a href="RestoCreateOrder.jsp">ORDERS</a>
+            <a href="RestoOrders.jsp">SUMMARY</a>
+            <a href="RestoPay.jsp">PAYMENTS</a>
+            <a href="RestoReserv.jsp">RESERVATIONS</a>
         </div>
     </nav>
-    
+
     <!-- Hero Section -->
     <section class="hero">
-        <h1>🍽️ Table Reservations</h1>
+        <h1>&#127860 Table Reservations</h1>
         <p>Book your table for an unforgettable dining experience</p>
     </section>
     

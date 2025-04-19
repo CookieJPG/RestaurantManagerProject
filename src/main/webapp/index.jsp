@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gourmet Delight Restaurant</title>
+    <title>Menu - Gourmet Delight</title>
+    <link rel="stylesheet" href="css/styles.css">
+
     <style>
         /* Global Styles */
         :root {
@@ -185,28 +187,36 @@
         .container {
             padding: 0 2rem;
         }
+
+        .nav-links a.active {
+            color: var(--secondary-color);
+            border-bottom: 2px solid var(--secondary-color);
+        }
     </style>
 </head>
+
 <body>
     <!-- Navigation Bar -->
     <nav class="navbar">
-        <a href="#" class="navbar-brand">Gourmet Delight</a>
+        <a href="index.html" class="navbar-brand">Gourmet Delight</a>
         <div class="nav-links">
-            <a href="#orders">Orders</a>
-            <a href="#stats">Statistics</a>
-            <a href="#add-item">Add Item</a>
+            <a href="index.jsp">MENU</a>
+            <a href="RestoCreateOrder.jsp">ORDERS</a>
+            <a href="RestoOrders.jsp">SUMMARY</a>
+            <a href="RestoPay.jsp">PAYMENTS</a>
+            <a href="RestoReserv.jsp">RESERVATIONS</a>
         </div>
     </nav>
     
     <!-- Hero Section -->
     <section class="hero">
-        <h1>🍽️ Latin & Spanish Cuisine</h1>
+        <h1>&#127860 Latin & Spanish Cuisine</h1>
         <p>Experience authentic flavors from Colombia, Peru, Venezuela, and Spain</p>
     </section>
     
     <!-- Menu Section -->
     <section class="menu-section">
-        <h1 class="section-title">Our Menu 🍴</h1>
+        <h1 class="section-title">Our Menu</h1>
         
         <!-- Main Dishes -->
         <div class="menu-category">
@@ -214,9 +224,9 @@
             <div class="menu-grid">
                 <!-- Pabellón Criollo -->
                 <div class="menu-item">
-                    <img src="https://images.unsplash.com/photo-1601050690597-df0568f70950" alt="Pabellón Criollo" class="menu-item-img">
+                    <img src="https://www.goya.com/wp-content/uploads/2023/10/venezuelan-shredded-beef.jpg" alt="Pabellón Criollo" class="menu-item-img">
                     <div class="menu-item-content">
-                        <h3 class="menu-item-title">Pabellón Criollo</h3>
+                        <h3 class="menu-item-title">Pabellon Criollo</h3>
                         <p class="menu-item-desc">Venezuela's national dish: shredded beef, black beans, rice, and fried plantains</p>
                         <div class="menu-item-price">
                             <span class="price">$18.99</span>
@@ -226,7 +236,7 @@
                 
                 <!-- Bandeja Paisa -->
                 <div class="menu-item">
-                    <img src="https://images.unsplash.com/photo-1639664144075-9dafc7d0b9c5" alt="Bandeja Paisa" class="menu-item-img">
+                    <img src="https://images.unsplash.com/photo-1601050690597-df0568f70950" alt="Bandeja Paisa" class="menu-item-img">
                     <div class="menu-item-content">
                         <h3 class="menu-item-title">Bandeja Paisa</h3>
                         <p class="menu-item-desc">Colombian platter with beans, rice, chorizo, chicharrón, avocado, plantain, and arepa</p>
@@ -238,7 +248,7 @@
                 
                 <!-- Ceviche -->
                 <div class="menu-item">
-                    <img src="https://images.unsplash.com/photo-1611143669185-af224c5e0102" alt="Ceviche Peruano" class="menu-item-img">
+                    <img src="https://images.unsplash.com/photo-1601050690597-df0568f70950" alt="Ceviche Peruano" class="menu-item-img">
                     <div class="menu-item-content">
                         <h3 class="menu-item-title">Ceviche Peruano</h3>
                         <p class="menu-item-desc">Peruvian classic: fresh fish marinated in lime juice with red onions, cilantro, and ají</p>
@@ -250,7 +260,7 @@
                 
                 <!-- Paella -->
                 <div class="menu-item">
-                    <img src="https://images.unsplash.com/photo-1625938144745-fdc08a7b8b1b" alt="Paella Valenciana" class="menu-item-img">
+                    <img src="https://images.unsplash.com/photo-1601050690597-df0568f70950" alt="Paella Valenciana" class="menu-item-img">
                     <div class="menu-item-content">
                         <h3 class="menu-item-title">Paella Valenciana</h3>
                         <p class="menu-item-desc">Spain's iconic saffron rice dish with seafood, chicken, and vegetables</p>
@@ -268,7 +278,7 @@
             <div class="menu-grid">
                 <!-- Aguapanela -->
                 <div class="menu-item">
-                    <img src="https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd" alt="Aguapanela" class="menu-item-img">
+                    <img src="https://delishglobe.com/wp-content/uploads/2024/12/Aguapanela-Sugarcane-Drink.png" alt="Aguapanela" class="menu-item-img">
                     <div class="menu-item-content">
                         <h3 class="menu-item-title">Aguapanela</h3>
                         <p class="menu-item-desc">Colombian comfort drink made from panela (unrefined sugar) with lime</p>
@@ -280,7 +290,7 @@
                 
                 <!-- Pisco Sour -->
                 <div class="menu-item">
-                    <img src="https://images.unsplash.com/photo-1551751299-1b51cab2694c" alt="Pisco Sour" class="menu-item-img">
+                    <img src="https://images.immediate.co.uk/production/volatile/sites/30/2020/08/pisco-sour-44f6c3b.jpg" alt="Pisco Sour" class="menu-item-img">
                     <div class="menu-item-content">
                         <h3 class="menu-item-title">Pisco Sour</h3>
                         <p class="menu-item-desc">Peru's national cocktail with pisco, lime juice, syrup, egg white, and bitters</p>
@@ -292,7 +302,7 @@
                 
                 <!-- Cocada -->
                 <div class="menu-item">
-                    <img src="https://images.unsplash.com/photo-1601050690117-94f5f6fa1bd0" alt="Cocada" class="menu-item-img">
+                    <img src="https://store.cachitos.ca/images/prod/10047.png" alt="Cocada" class="menu-item-img">
                     <div class="menu-item-content">
                         <h3 class="menu-item-title">Cocada</h3>
                         <p class="menu-item-desc">Venezuelan refreshing coconut milk drink, often served with condensed milk</p>
@@ -304,7 +314,7 @@
                 
                 <!-- Tinto de Verano -->
                 <div class="menu-item">
-                    <img src="https://images.unsplash.com/photo-1470337458703-46ad1756a187" alt="Tinto de Verano" class="menu-item-img">
+                    <img src="https://threemanycooks.com/wp-content/uploads/2013/08/Tinto-de-Verano.jpg" alt="Tinto de Verano" class="menu-item-img">
                     <div class="menu-item-content">
                         <h3 class="menu-item-title">Tinto de Verano</h3>
                         <p class="menu-item-desc">Spanish summer drink: red wine mixed with lemon soda over ice</p>
@@ -334,7 +344,7 @@
                 
                 <!-- Tres Leches -->
                 <div class="menu-item">
-                    <img src="https://images.unsplash.com/photo-1563805042-7684c019e1cb" alt="Tres Leches" class="menu-item-img">
+                    <img src="https://res.cloudinary.com/kraft-heinz-whats-cooking-ca/image/upload/f_auto/q_auto/c_limit,w_3840/f_auto/q_auto/v1/dxp-images/brands/Recipes/all-recipe-assets/dulce-de-leche-tres-leches-cake/ac71264974004dd687abc05e3d082e93_hmzpp6?_a=BAVAfVDW0" alt="Tres Leches" class="menu-item-img">
                     <div class="menu-item-content">
                         <h3 class="menu-item-title">Tres Leches</h3>
                         <p class="menu-item-desc">Venezuelan moist cake soaked in three kinds of milk</p>

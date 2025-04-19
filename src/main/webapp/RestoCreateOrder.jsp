@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+	<meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Order - Gourmet Delight</title>
+    <title>Orders - Gourmet Delight</title>
+	<link rel="stylesheet" href="css/styles.css">
+	<link rel="stylesheet" href="css/RestoCreateOrder.css">
     <style>
         /* Global Styles */
         :root {
@@ -209,22 +211,29 @@
             padding: 1.5rem;
             margin-top: 3rem;
         }
+
+		.nav-links a.active {
+			color: var(--secondary-color);
+			border-bottom: 2px solid var(--secondary-color);
+		}
     </style>
 </head>
 <body>
     <!-- Navigation Bar -->
-    <nav class="navbar">
-        <a href="index.html" class="navbar-brand">Gourmet Delight</a>
-        <div class="nav-links">
-            <a href="orders.html">Orders</a>
-            <a href="stats.html">Statistics</a>
-            <a href="add-item.html">Add Item</a>
-        </div>
-    </nav>
+	<nav class="navbar">
+		<a href="index.jsp" class="navbar-brand">Gourmet Delight</a>
+		<div class="nav-links">
+			<a href="index.jsp">MENU</a>
+			<a href="RestoCreateOrder.jsp">ORDERS</a>
+			<a href="RestoOrders.jsp">SUMMARY</a>
+			<a href="RestoPay.jsp">PAYMENTS</a>
+			<a href="RestoReserv.jsp">RESERVATIONS</a>
+		</div>
+	</nav>
     
     <!-- Hero Section -->
     <section class="hero">
-        <h1>📝 Create New Order</h1>
+        <h1>&#127860 Create New Order</h1>
         <p>Start a new dining experience for your customers</p>
     </section>
     
