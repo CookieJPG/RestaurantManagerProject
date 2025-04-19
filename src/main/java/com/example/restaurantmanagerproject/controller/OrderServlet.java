@@ -71,90 +71,96 @@ public class OrderServlet extends HttpServlet {
     private void createOrder(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-
+            // 1. Obtener parámetros básicos
             int tableId = Integer.parseInt(request.getParameter("tableId"));
-
-            //Get fields
             String customerId = request.getParameter("customerId");
-            customerId = (customerId != null && !customerId.trim().isEmpty()) ? customerId.trim() : null;
 
-            String customerName = request.getParameter("customerName");
-            customerName = (customerName != null && !customerName.trim().isEmpty()) ? customerName.trim() : null;
-
-            String email = request.getParameter("email");
-            email = (email != null && !email.trim().isEmpty()) ? email.trim() : null;
-
-            String phone = request.getParameter("phone");
-            phone = (phone != null && !phone.trim().isEmpty()) ? phone.trim() : null;
-
-            String status = request.getParameter("orderStatus");
-            status = (status != null && !status.trim().isEmpty()) ? status.trim() : null;
-
-            String customerType = request.getParameter("customerType");
-            customerType = (customerType != null && !customerType.trim().isEmpty()) ? customerType.trim() : null;
-
-            // Try to find a matching customer
-            List<Customer> allCustomers = daoCustomer.findAllCustomers();
-            Customer matchedCustomer = null;
-
-            for (Customer c : allCustomers) {
-                if ((customerId != null && c.getId().equals(customerId)) ||
-                        (email != null && email.equalsIgnoreCase(c.getEmail())) ||
-                        (phone != null && phone.equals(c.getPhone()))) {
-                    matchedCustomer = c;
-                    break;
-                }
+            // 2. Buscar cliente existente
+            Customer customer = daoCustomer.findCustomerById(customerId);
+            if (customer == null) {
+                response.sendRedirect(request.getContextPath() + "/RestoCreateOrder.jsp?error=customer_not_found");
+                return;
             }
 
-            //Create new customer if ID is not found
-            if (matchedCustomer == null) {
-                if (customerName == null) {
-                    response.sendRedirect(request.getContextPath() + "/orders?error=missing_name");
-                    return;
-                }
-
-                switch (customerType != null ? customerType : "Regular") {
-                    case "FirstTime":
-                        matchedCustomer = new CTFirstTime(customerName, email, phone);
-                        break;
-                    case "Regular":
-                        matchedCustomer = new CTRegular(customerName, email, phone);
-                        break;
-                    case "VIP":
-                        matchedCustomer = new CTVIP(customerName, email, phone);
-                        break;
-                    default:
-                        matchedCustomer = new CTRegular(customerName, email, phone);
-                        break;
-                }
-
-                daoCustomer.saveCustomer(matchedCustomer);
-            }
-
-            //Once we get the customer, prepare the order
+            // 3. Procesar items seleccionados
+            String[] itemIds = request.getParameterValues("itemId");
+            String[] quantities = request.getParameterValues("quantity");
             ArrayList<ISellable> orderItems = new ArrayList<>();
-            Order order = new Order(
-                    0,
-                    tableId,
-                    matchedCustomer,
-                    orderItems,
-                    status,
-                    LocalDateTime.now()
-            );
 
-            // Save and redirect
+            if (itemIds != null && quantities != null && itemIds.length == quantities.length) {
+                for (int i = 0; i < itemIds.length; i++) {
+                    int quantity = Integer.parseInt(quantities[i]);
+                    if (quantity > 0) {
+                        int itemId = Integer.parseInt(itemIds[i]);
+                        ISellable item = createItemFromId(itemId);
+                        if (item != null) {
+                            for (int j = 0; j < quantity; j++) {
+                                orderItems.add(item);
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (orderItems.isEmpty()) {
+                response.sendRedirect(request.getContextPath() + "/RestoCreateOrder.jsp?error=no_items_selected");
+                return;
+            }
+
+            // 4. Crear y guardar la orden
+            Order order = new Order(
+                    0, // ID será generado
+                    tableId,
+                    customer,
+                    orderItems,
+                    "Pending",
+                    LocalDateTime.now());
+
             if (daoOrders.SaveOrder(order)) {
-                response.sendRedirect(request.getContextPath() + "/orders?orderId=" +
-                        order.getId() + "&success=created");
+                response.sendRedirect(
+                        request.getContextPath() + "/RestoOrders.jsp?success=order_created&orderId=" + order.getId());
             } else {
-                response.sendRedirect(request.getContextPath() + "/orders?error=creation_failed");
+                response.sendRedirect(request.getContextPath() + "/RestoCreateOrder.jsp?error=order_creation_failed");
             }
 
         } catch (NumberFormatException e) {
-            response.sendRedirect(request.getContextPath() + "/orders?error=invalid_number");
+            response.sendRedirect(request.getContextPath() + "/RestoCreateOrder.jsp?error=invalid_input");
         } catch (Exception e) {
             e.printStackTrace();
-            response.sendRedirect(request.getContextPath() + "/orders?error=server_error");
+            response.sendRedirect(request.getContextPath() + "/RestoCreateOrder.jsp?error=server_error");
+        }
+    }
+
+    // Método auxiliar para crear items basados en IDs conocidos
+    private ISellable createItemFromId(int itemId) {
+        // Basado en los datos de RestaurantDB.sql
+        switch (itemId) {
+            case 1:
+                return new Dish(1, "Pabellón Criollo", "Regular", 18.99);
+            case 2:
+                return new Dish(2, "Bandeja Paisa", "Regular", 19.99);
+            case 3:
+                return new Dish(3, "Ceviche Peruano", "Regular", 16.99);
+            case 4:
+                return new Dish(4, "Paella Valenciana", "Regular", 22.99);
+            case 5:
+                return new Beverage(5, "Aguapanela", "Medium", 4.99);
+            case 6:
+                return new Beverage(6, "Pisco Sour", "Medium", 10.99);
+            case 7:
+                return new Beverage(7, "Cocada", "Medium", 5.99);
+            case 8:
+                return new Beverage(8, "Tinto de Verano", "Medium", 7.99);
+            case 9:
+                return new Dessert(9, "Alfajores", "Standard", 6.99);
+            case 10:
+                return new Dessert(10, "Tres Leches", "Standard", 7.99);
+            case 11:
+                return new Dessert(11, "Arroz con Leche", "Standard", 5.99);
+            case 12:
+                return new Dessert(12, "Crema Catalana", "Standard", 8.99);
+            default:
+                return null;
         }
     }
 

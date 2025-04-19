@@ -5,7 +5,7 @@ public class Table {
     private boolean available;
 
     public Table(boolean b) {
-        this.id = id; // Solo si quitamos el IDENTITY de la base de datos
+        // this.id = id; // Solo si quitamos el IDENTITY de la base de datos
         this.available = b;
     }
 

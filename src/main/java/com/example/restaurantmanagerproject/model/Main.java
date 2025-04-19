@@ -5,7 +5,6 @@ import com.example.restaurantmanagerproject.dao.DAOCRUDManager;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import com.example.restaurantmanagerproject.model.IRewardable.Type;
 
 public class Main {
 
