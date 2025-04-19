@@ -41,7 +41,7 @@ public class PaymentServlet extends HttpServlet {
                 response.sendRedirect(request.getContextPath() + "/payments?error=invalid_id");
             }
         } else {
-            request.getRequestDispatcher("/payments.jsp").forward(request, response);
+            request.getRequestDispatcher("/RestoPay.jsp").forward(request, response);
         }
     }
 
