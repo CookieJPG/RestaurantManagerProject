@@ -262,20 +262,22 @@
         <h1 class="section-title">Register Payment</h1>
         
         <div class="payment-container">
-            <form id="paymentForm" class="payment-form">
+            <form id="paymentForm" class="payment-form" action="payments" method="POST">
+                <input type="hidden" name="action" value="create">
+
                 <div class="form-group">
                     <label for="orderId">Order ID</label>
-                    <input type="number" id="orderId" class="form-control" required>
+                    <input type="number" id="orderId" name="orderId" class="form-control" required>
                 </div>
                 
                 <div class="form-group">
                     <label for="amount">Amount ($)</label>
-                    <input type="number" id="amount" class="form-control" step="0.01" min="0" required>
+                    <input type="number" id="amount" name="amount" class="form-control" step="0.01" min="0" required>
                 </div>
                 
                 <div class="form-group">
                     <label for="paymentMethod">Payment Method</label>
-                    <select id="paymentMethod" class="form-control" required>
+                    <select id="paymentMethod" name="paymentMethod" class="form-control" required>
                         <option value="">Select payment method</option>
                         <option value="Cash">Cash</option>
                         <option value="Credit Card">Credit Card</option>
@@ -287,15 +289,15 @@
                 
                 <div class="form-group">
                     <label for="transactionId">Transaction ID (optional)</label>
-                    <input type="text" id="transactionId" class="form-control">
+                    <input type="text" id="transactionId" name="transactionId" class="form-control">
                 </div>
                 
                 <div class="form-group">
                     <label for="status">Payment Status</label>
-                    <select id="status" class="form-control" required>
-                        <option value="Pending" selected>Pending</option>
-                        <option value="Completed">Completed</option>
-                        <option value="Failed">Failed</option>
+                    <select id="status" name="status" class="form-control" required>
+                        <option value="PENDING" selected>Pending</option>
+                        <option value="CONFIRMED">Completed</option>
+                        <option value="CANCELLED">Failed</option>
                     </select>
                 </div>
                 
@@ -320,33 +322,34 @@
                         </tr>
                     </thead>
                     <tbody>
+                        <%@ page import="com.example.restaurantmanagerproject.dao.DAOCRUDManager" %>
+                        <%@ page import="com.example.restaurantmanagerproject.model.Payment" %>
+                        <%@ page import="java.util.List" %>
+
+                        <%
+                            DAOCRUDManager dao = new DAOCRUDManager();
+                            List<Payment> payments = dao.getAllPayments();
+
+                            for (Payment payment : payments) {
+                        %>
                         <tr>
-                            <td>#5001</td>
-                            <td>#1002</td>
-                            <td>$34.97</td>
-                            <td>Credit Card</td>
-                            <td>TRX-789456123</td>
-                            <td><span class="status-badge status-completed">Completed</span></td>
-                            <td>Oct 15, 2023 1:30 PM</td>
+                            <td>#<%= payment.getPaymentId() %></td>
+                            <td>#<%= payment.getOrder().getId() %></td>
+                            <td>$<%= String.format("%.2f", payment.getAmount()) %></td>
+                            <td><%= payment.getPaymentMethod() %></td>
+                            <td><%= payment.getTransactionId() != null ? payment.getTransactionId() : "-" %></td>
+                            <td>
+                                <span class="status-badge
+                                    <%= payment.getStatus().toString().equals("CONFIRMED") ? "status-completed" :
+                                        payment.getStatus().toString().equals("CANCELLED") ? "status-failed" : "status-pending" %>">
+                                    <%= payment.getStatus().toString() %>
+                                </span>
+                            </td>
+                            <td><%= payment.getPaymentDate().toString() %></td>
                         </tr>
-                        <tr>
-                            <td>#5002</td>
-                            <td>#1001</td>
-                            <td>$28.97</td>
-                            <td>Cash</td>
-                            <td>-</td>
-                            <td><span class="status-badge status-pending">Pending</span></td>
-                            <td>Oct 15, 2023 1:45 PM</td>
-                        </tr>
-                        <tr>
-                            <td>#5003</td>
-                            <td>#1003</td>
-                            <td>$38.97</td>
-                            <td>Debit Card</td>
-                            <td>TRX-321654987</td>
-                            <td><span class="status-badge status-failed">Failed</span></td>
-                            <td>Oct 15, 2023 3:15 PM</td>
-                        </tr>
+                        <%
+                            }
+                        %>
                     </tbody>
                 </table>
             </div>
@@ -360,33 +363,12 @@
 
     <script>
         document.getElementById('paymentForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // Get form values
-            const orderId = document.getElementById('orderId').value;
-            const amount = document.getElementById('amount').value;
-            const paymentMethod = document.getElementById('paymentMethod').value;
-            const transactionId = document.getElementById('transactionId').value;
-            const status = document.getElementById('status').value;
-            const paymentTime = new Date().toLocaleString();
-            
-            // In a real application, you would send this data to your server
-            console.log('Payment Data:', {
-                orderId,
-                amount,
-                paymentMethod,
-                transactionId,
-                status,
-                paymentTime
-            });
-            
-            // Show success message
-            alert('Payment registered successfully!');
-            
-            // Reset form
-            this.reset();
-            
-            // In a real app, you would refresh the payment records table here
+            const amount = parseFloat(document.getElementById('amount').value);
+            if (isNaN(amount)) {
+                e.preventDefault();
+                alert('Please enter a valid amount');
+                return;
+            }
         });
     </script>
 </body>

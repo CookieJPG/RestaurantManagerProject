@@ -26,33 +26,18 @@ public class PaymentServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String paymentIdParam = request.getParameter("paymentId");
-        if (paymentIdParam != null) {
-            try {
-                int paymentId = Integer.parseInt(paymentIdParam);
-                Payment payment = daoPayments.readPayment(paymentId);
-                if (payment != null) {
-                    request.setAttribute("payment", payment);
-                    request.getRequestDispatcher("/paymentDetails.jsp").forward(request, response);
-                } else {
-                    response.sendRedirect(request.getContextPath() + "/payments?error=not_found");
-                }
-            } catch (NumberFormatException e) {
-                response.sendRedirect(request.getContextPath() + "/payments?error=invalid_id");
-            }
-        } else {
-            request.getRequestDispatcher("/RestoPay.jsp").forward(request, response);
-        }
+        request.getRequestDispatcher("/RestoPay.jsp").forward(request, response);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
+        request.setCharacterEncoding("UTF-8");
         String action = request.getParameter("action");
 
         if (action == null) {
-            throw new ServletException("Action parameter is missing");
+            response.sendRedirect(request.getContextPath() + "/payments?error=missing_action");
+            return;
         }
 
         switch (action) {
@@ -66,7 +51,7 @@ public class PaymentServlet extends HttpServlet {
                 deletePayment(request, response);
                 break;
             default:
-                throw new ServletException("Invalid Action: " + action);
+                response.sendRedirect(request.getContextPath() + "/payments?error=invalid_action");
         }
     }
 
@@ -78,15 +63,14 @@ public class PaymentServlet extends HttpServlet {
 
             double amount = Double.parseDouble(request.getParameter("amount"));
             String paymentMethod = request.getParameter("paymentMethod");
-            Status status = Status.valueOf(request.getParameter("status"));
+            Status status = Status.valueOf(request.getParameter("status").toUpperCase());
 
-            LocalDateTime paymentDate = request.getParameter("paymentDate") != null && !request.getParameter("paymentDate").isEmpty()
-                    ? LocalDateTime.parse(request.getParameter("paymentDate"))
-                    : LocalDateTime.now();
+            LocalDateTime paymentDate = LocalDateTime.now();
 
-            String transactionId = request.getParameter("transactionId") != null
-                    ? request.getParameter("transactionId")
-                    : UUID.randomUUID().toString();
+            String transactionId = request.getParameter("transactionId");
+            if (transactionId == null || transactionId.trim().isEmpty()) {
+                transactionId = UUID.randomUUID().toString();
+            }
 
             Payment payment = new Payment(
                     0,
@@ -99,8 +83,7 @@ public class PaymentServlet extends HttpServlet {
             );
 
             Payment createdPayment = daoPayments.createPayment(payment);
-            response.sendRedirect(request.getContextPath() + "/payments?paymentId=" +
-                    createdPayment.getPaymentId() + "&success=created");
+            response.sendRedirect(request.getContextPath() + "/payments?success=created");
 
         } catch (NumberFormatException e) {
             response.sendRedirect(request.getContextPath() + "/payments?error=invalid_number");
@@ -124,6 +107,10 @@ public class PaymentServlet extends HttpServlet {
                 return;
             }
 
+            if (request.getParameter("orderId") != null) {
+                int orderId = Integer.parseInt(request.getParameter("orderId"));
+                payment.setOrder(new Order(orderId, 0, null, null, null, null));
+            }
             if (request.getParameter("amount") != null) {
                 payment.setAmount(Double.parseDouble(request.getParameter("amount")));
             }
@@ -131,25 +118,19 @@ public class PaymentServlet extends HttpServlet {
                 payment.setPaymentMethod(request.getParameter("paymentMethod"));
             }
             if (request.getParameter("status") != null) {
-                payment.setStatus(Status.valueOf(request.getParameter("status")));
+                payment.setStatus(Status.valueOf(request.getParameter("status").toUpperCase()));
             }
             if (request.getParameter("transactionId") != null) {
                 payment.setTransactionId(request.getParameter("transactionId"));
             }
-            if (request.getParameter("paymentDate") != null && !request.getParameter("paymentDate").isEmpty()) {
-                payment.setPaymentTime(LocalDateTime.parse(request.getParameter("paymentDate")));
-            }
 
             daoPayments.createPayment(payment);
-            response.sendRedirect(request.getContextPath() + "/payments?paymentId=" +
-                    paymentId + "&success=updated");
+            response.sendRedirect(request.getContextPath() + "/payments?success=updated");
 
         } catch (NumberFormatException e) {
             response.sendRedirect(request.getContextPath() + "/payments?error=invalid_number");
         } catch (IllegalArgumentException e) {
             response.sendRedirect(request.getContextPath() + "/payments?error=invalid_status");
-        } catch (DateTimeParseException e) {
-            response.sendRedirect(request.getContextPath() + "/payments?error=invalid_date");
         } catch (Exception e) {
             response.sendRedirect(request.getContextPath() + "/payments?error=server_error");
         }

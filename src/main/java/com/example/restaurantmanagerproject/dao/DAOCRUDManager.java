@@ -628,6 +628,60 @@ public class DAOCRUDManager implements DAOReservations, DAOOrders, DAOPayments, 
         }
     }
 
+    public List<Payment> getAllPayments() {
+        List<Payment> payments = new ArrayList<>();
+        Connection conn = null;
+        try {
+            conn = DbUtil.getConnection();
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT * FROM Payments");
+
+            while (rs.next()) {
+                int paymentId = rs.getInt("PaymentID");
+                int orderId = rs.getInt("OrderID");
+                double amount = rs.getDouble("Amount");
+                String paymentMethod = rs.getString("PaymentMethod");
+                String transactionId = rs.getString("TransactionID");
+                String statusStr = rs.getString("Status");
+                LocalDateTime paymentTime = rs.getTimestamp("PaymentTime").toLocalDateTime();
+
+                Status status;
+                switch (statusStr != null ? statusStr.toUpperCase() : "PENDING") {
+                    case "CONFIRMED":
+                        status = Status.CONFIRMED;
+                        break;
+                    case "CANCELLED":
+                        status = Status.CANCELLED;
+                        break;
+                    default:
+                        status = Status.PENDING;
+                }
+
+                Order order = getOrderById(orderId);
+                if (order == null) {
+                    order = new Order(orderId, 0, null, null, null, null);
+                }
+
+                Payment payment = new Payment(
+                        paymentId,
+                        order,
+                        amount,
+                        paymentMethod,
+                        transactionId,
+                        status,
+                        paymentTime
+                );
+
+                payments.add(payment);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error getting all payments: " + e.getMessage());
+        } finally {
+            DbUtil.closeQuietly(conn);
+        }
+        return payments;
+    }
+
     // Actualizar puntos de lealtad del cliente despues de un pago // * Funcionando
     private void updateCustomerLoyaltyPoints(Payment payment) {
         if (payment.getCustomer() == null)
