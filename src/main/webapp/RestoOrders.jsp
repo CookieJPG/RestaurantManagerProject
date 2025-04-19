@@ -299,13 +299,14 @@
 <body>
     <!-- Navigation Bar -->
     <nav class="navbar">
-        <a href="index.jsp" class="navbar-brand">Gourmet Delight</a>
+        <a href="index.html" class="navbar-brand">Gourmet Delight</a>
         <div class="nav-links">
-            <a href="index.jsp">MENU</a>
-            <a href="RestoCreateOrder.jsp">ORDERS</a>
-            <a href="RestoOrders.jsp">SUMMARY</a>
-            <a href="RestoPay.jsp">PAYMENTS</a>
-            <a href="RestoReserv.jsp">RESERVATIONS</a>
+            <a href="menu.html">MENU</a>
+            <a href="orders.html">ORDERS</a>
+            <a href="summary.html">SUMMARY</a>
+            <a href="payments.html">PAYMENTS</a>
+            <a href="reservations.html">RESERVATIONS</a>
+            <a href="RestoCustomer.jsp">CUSTOMER</a>
         </div>
     </nav>
     
@@ -332,11 +333,11 @@
         </div>
         <button class="clear-search" onclick="clearSearch()">Clear Search</button>
     </div>
-    
+
     <!-- Order Management Section -->
     <section class="order-section">
         <h1 class="section-title">Current Orders</h1>
-        
+
         <div class="orders-container">
             <!-- Order 1 -->
             <div class="order-card">
@@ -347,12 +348,12 @@
                     </div>
                     <span class="order-status status-pending">Pending</span>
                 </div>
-                
+
                 <div class="order-details">
                     <p><strong>Customer:</strong> Maria Rodriguez</p>
                     <p><strong>Table:</strong> 5</p>
                 </div>
-                
+
                 <table class="order-items">
                     <thead>
                         <tr>
@@ -374,17 +375,17 @@
                         </tr>
                     </tbody>
                 </table>
-                
+
                 <div class="order-total">
                     <p><strong>Total:</strong> $28.97</p>
                 </div>
-                
+
                 <div class="order-actions">
                     <button class="action-btn cancel-btn">Cancel Order</button>
                     <button class="action-btn complete-btn">Mark as Completed</button>
                 </div>
             </div>
-            
+
             <!-- Order 2 -->
             <div class="order-card">
                 <div class="order-header">
@@ -394,12 +395,12 @@
                     </div>
                     <span class="order-status status-completed">Completed</span>
                 </div>
-                
+
                 <div class="order-details">
                     <p><strong>Customer:</strong> Carlos Mendoza</p>
                     <p><strong>Table:</strong> 3</p>
                 </div>
-                
+
                 <table class="order-items">
                     <thead>
                         <tr>
@@ -426,17 +427,17 @@
                         </tr>
                     </tbody>
                 </table>
-                
+
                 <div class="order-total">
                     <p><strong>Total:</strong> $34.97</p>
                 </div>
-                
+
                 <div class="order-actions">
                     <button class="action-btn cancel-btn">Cancel Order</button>
                     <button class="action-btn complete-btn" disabled>Completed</button>
                 </div>
             </div>
-            
+
             <!-- Order 3 -->
             <div class="order-card">
                 <div class="order-header">
@@ -446,12 +447,12 @@
                     </div>
                     <span class="order-status status-cancelled">Cancelled</span>
                 </div>
-                
+
                 <div class="order-details">
                     <p><strong>Customer:</strong> Luis Gonzalez</p>
                     <p><strong>Table:</strong> 7</p>
                 </div>
-                
+
                 <table class="order-items">
                     <thead>
                         <tr>
@@ -473,11 +474,11 @@
                         </tr>
                     </tbody>
                 </table>
-                
+
                 <div class="order-total">
                     <p><strong>Total:</strong> $38.97</p>
                 </div>
-                
+
                 <div class="order-actions">
                     <button class="action-btn cancel-btn" disabled>Cancelled</button>
                     <button class="action-btn complete-btn">Mark as Completed</button>

@@ -205,6 +205,7 @@
             <a href="RestoOrders.jsp">SUMMARY</a>
             <a href="RestoPay.jsp">PAYMENTS</a>
             <a href="RestoReserv.jsp">RESERVATIONS</a>
+            <a href="RestoCustomer.jsp">CUSTOMER</a>
         </div>
     </nav>
     
