@@ -122,6 +122,14 @@ public abstract class Customer implements IRewardable {
         return loyaltyPoints;
     }
 
+    public void setLoyaltyPoints(double loyaltyPoints) {
+        if (loyaltyPoints < 0) {
+            throw new IllegalArgumentException("Loyalty points cannot be negative");
+        }
+
+        this.loyaltyPoints = loyaltyPoints;
+    }
+
     public void addLoyaltyPoints(double loyaltyPoints) {
         this.loyaltyPoints += loyaltyPoints;
     }
@@ -129,5 +137,4 @@ public abstract class Customer implements IRewardable {
     public void removeLoyaltyPoints(double loyaltyPoints) {
         this.loyaltyPoints -= loyaltyPoints;
     }
-
 }

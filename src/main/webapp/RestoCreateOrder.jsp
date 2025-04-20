@@ -269,14 +269,12 @@
 
 			<div class="form-group">
 				<label for="customerId">Customer ID:</label>
-				<input type="text" id="customerId" name="customerId" pattern="[A-Za-z0-9]{8}"
-					   title="8-character customer ID" required>
+				<input type="text" id="customerId" name="customerId">
 			</div>
 
 			<div class="menu-items">
 				<h3>Menu Items</h3>
 
-				<!-- Items del menú con campos ocultos para ID -->
 				<div class="menu-item">
 					<div class="menu-item-info">
 						<div class="menu-item-name">Pabellón Criollo</div>
@@ -440,11 +438,7 @@
 </footer>
 
 <script>
-	// Quantity control functionality (se mantiene igual)
-
-	// Form submission modificado
 	document.getElementById('createOrderForm').addEventListener('submit', function (e) {
-		// Validar que al menos un ítem tenga cantidad > 0
 		const quantities = document.querySelectorAll('.quantity');
 		let hasItems = false;
 
@@ -459,8 +453,6 @@
 			alert('Please select at least one menu item');
 			return;
 		}
-
-		// El formulario se enviará normalmente con los datos
 	});
 </script>
 </body>

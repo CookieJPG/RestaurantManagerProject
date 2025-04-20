@@ -184,10 +184,12 @@
 <section class="form-section">
     <h1 class="section-title">Register Customer</h1>
 
-    <form class="customer-form" method="post" action="CustomerCreate.jsp">
+    <form class="customer-form" method="post" action="customers">
+        <input type="hidden" name="action" value="create">
+
         <div class="form-group">
             <label for="customerID">Customer ID:</label>
-            <input type="text" name="customerID" required maxlength="12" />
+            <input type="text" id="customerID" name="customerID" required maxlength="12" />
         </div>
 
         <div class="form-group">
