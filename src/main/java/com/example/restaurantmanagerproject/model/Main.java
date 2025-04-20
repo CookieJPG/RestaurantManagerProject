@@ -139,8 +139,7 @@ public class Main {
         daoManager.SaveOrder(order);
         System.out.println("Orden guardada exitosamente");
 
-        // Obtener orden por ID // ! SOLO FALTA PODER GUARDAR LOS ITEMS EN LA ORDEN EN
-        // ! LA DB
+        // Obtener orden por ID
         Order retrievedOrder = daoManager.getOrderById(order.getId());
         System.out.println("\nOrden recuperada: " +
                 (retrievedOrder != null ? "ID " + retrievedOrder.getId() : "No encontrada"));

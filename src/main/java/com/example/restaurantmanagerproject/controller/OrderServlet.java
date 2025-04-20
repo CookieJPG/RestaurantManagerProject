@@ -39,7 +39,7 @@ public class OrderServlet extends HttpServlet {
         } else {
             List<Order> orders = daoOrders.getAllOrders();
             request.setAttribute("orders", orders);
-            request.getRequestDispatcher("/orders.jsp").forward(request, response);
+            request.getRequestDispatcher("/RestoOrders.jsp").forward(request, response);
         }
     }
 
@@ -169,6 +169,7 @@ public class OrderServlet extends HttpServlet {
         try {
             int orderId = Integer.parseInt(request.getParameter("orderId"));
             Order order = daoOrders.getOrderById(orderId);
+            String redirect = request.getParameter("redirect");
 
             if (order == null) {
                 response.sendRedirect(request.getContextPath() + "/orders?error=not_found");
@@ -184,8 +185,14 @@ public class OrderServlet extends HttpServlet {
             }
 
             daoOrders.SaveOrder(order);
-            response.sendRedirect(request.getContextPath() + "/orders?orderId=" +
-                    orderId + "&success=updated");
+
+            // Redirigir a la página especificada o a la vista de detalles
+            if (redirect != null && !redirect.isEmpty()) {
+                response.sendRedirect(redirect + "?success=updated");
+            } else {
+                response.sendRedirect(request.getContextPath() + "/orders?orderId=" +
+                        orderId + "&success=updated");
+            }
         } catch (NumberFormatException e) {
             response.sendRedirect(request.getContextPath() + "/orders?error=invalid_number");
         } catch (Exception e) {

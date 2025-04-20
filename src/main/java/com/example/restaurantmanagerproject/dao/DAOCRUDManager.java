@@ -150,8 +150,11 @@ public class DAOCRUDManager implements DAOReservations, DAOOrders, DAOPayments, 
     public List<Order> getAllOrders() {
         List<Order> orders = new ArrayList<>();
         Connection conn = null;
+        PreparedStatement stmtItems = null;
+        ResultSet rsItems = null;
         PreparedStatement stmtCustomer = null;
         ResultSet rsCustomer = null;
+
         try {
             conn = DbUtil.getConnection();
             Statement stmt = conn.createStatement();
@@ -195,12 +198,37 @@ public class DAOCRUDManager implements DAOReservations, DAOOrders, DAOPayments, 
                     }
                 }
 
-                orders.add(new Order(orderId, tableId, customer, null, status, orderDate));
-            }
+                // Obtener items del pedido
+                stmtItems = conn.prepareStatement(
+                        "SELECT oi.ItemID, oi.Quantity, i.ItemName, i.ItemPrice, i.Category " +
+                                "FROM OrderItems oi JOIN Items i ON oi.ItemID = i.ItemID " +
+                                "WHERE oi.OrderID = ?");
+                stmtItems.setInt(1, orderId);
+                rsItems = stmtItems.executeQuery();
 
+                ArrayList<ISellable> orderItems = new ArrayList<>();
+                while (rsItems.next()) {
+                    int itemId = rsItems.getInt("ItemID");
+                    int quantity = rsItems.getInt("Quantity");
+                    String itemName = rsItems.getString("ItemName");
+                    double itemPrice = rsItems.getDouble("ItemPrice");
+                    String category = rsItems.getString("Category");
+
+                    ISellable item = createSellableItem(itemId, itemName, itemPrice, category);
+                    for (int i = 0; i < quantity; i++) {
+                        orderItems.add(item);
+                    }
+                }
+
+                orders.add(new Order(orderId, tableId, customer, orderItems, status, orderDate));
+            }
         } catch (SQLException e) {
             System.err.println("Error getting all orders: " + e.getMessage());
         } finally {
+            DbUtil.closeQuietly(rsCustomer);
+            DbUtil.closeQuietly(stmtCustomer);
+            DbUtil.closeQuietly(rsItems);
+            DbUtil.closeQuietly(stmtItems);
             DbUtil.closeQuietly(conn);
         }
         return orders;
@@ -669,8 +697,7 @@ public class DAOCRUDManager implements DAOReservations, DAOOrders, DAOPayments, 
                         paymentMethod,
                         transactionId,
                         status,
-                        paymentTime
-                );
+                        paymentTime);
 
                 payments.add(payment);
             }
