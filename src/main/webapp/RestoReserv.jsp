@@ -232,6 +232,68 @@
             color: var(--secondary-color);
             border-bottom: 2px solid var(--secondary-color);
         }
+
+        /* Styles for reservation actions */
+        .reservation-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 1rem;
+        }
+
+        .action-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .confirm-btn {
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        .confirm-btn:hover {
+            background: #b38b4a;
+        }
+
+        .cancel-btn {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .cancel-btn:hover {
+            background: #f1b0b7;
+        }
+
+        .records-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .records-table th,
+        .records-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .records-table th {
+            background-color: var(--light-bg);
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .records-table tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .action-cell {
+            white-space: nowrap;
+        }
     </style>
 </head>
 
@@ -405,27 +467,16 @@
                 <h2
                     style="color: var(--primary-color); margin-bottom: 1.5rem; font-size: 1.5rem; border-bottom: 1px solid #eee; padding-bottom: 0.5rem;">
                     Current Reservations</h2>
-                <table class="records-table" style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+                <table class="records-table">
                     <thead>
                         <tr>
-                            <th
-                                style="padding: 1rem; text-align: left; border-bottom: 1px solid #e9ecef; background-color: var(--light-bg); color: var(--primary-color); font-weight: 600;">
-                                Reservation ID</th>
-                            <th
-                                style="padding: 1rem; text-align: left; border-bottom: 1px solid #e9ecef; background-color: var(--light-bg); color: var(--primary-color); font-weight: 600;">
-                                Customer</th>
-                            <th
-                                style="padding: 1rem; text-align: left; border-bottom: 1px solid #e9ecef; background-color: var(--light-bg); color: var(--primary-color); font-weight: 600;">
-                                Table</th>
-                            <th
-                                style="padding: 1rem; text-align: left; border-bottom: 1px solid #e9ecef; background-color: var(--light-bg); color: var(--primary-color); font-weight: 600;">
-                                Date & Time</th>
-                            <th
-                                style="padding: 1rem; text-align: left; border-bottom: 1px solid #e9ecef; background-color: var(--light-bg); color: var(--primary-color); font-weight: 600;">
-                                Guests</th>
-                            <th
-                                style="padding: 1rem; text-align: left; border-bottom: 1px solid #e9ecef; background-color: var(--light-bg); color: var(--primary-color); font-weight: 600;">
-                                Status</th>
+                            <th>Reservation ID</th>
+                            <th>Customer</th>
+                            <th>Table</th>
+                            <th>Date & Time</th>
+                            <th>Guests</th>
+                            <th>Status</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -433,7 +484,6 @@
                             <%@ page import="com.example.restaurantmanagerproject.model.Reservation" %>
                                 <%@ page import="java.util.List" %>
                                     <%@ page import="java.time.format.DateTimeFormatter" %>
-
                                         <% DAOCRUDManager dao=new DAOCRUDManager(); List<Reservation> reservations =
                                             dao.getAllReservations();
                                             String pattern = "MMM dd, yyyy hh:mm a";
@@ -442,34 +492,50 @@
                                             for (Reservation reservation : reservations) {
                                             %>
                                             <tr>
-                                                <td
-                                                    style="padding: 1rem; text-align: left; border-bottom: 1px solid #e9ecef;">
-                                                    #<%= reservation.getReservationId() %>
+                                                <td>#<%= reservation.getReservationId() %>
                                                 </td>
-                                                <td
-                                                    style="padding: 1rem; text-align: left; border-bottom: 1px solid #e9ecef;">
+                                                <td>
                                                     <%= reservation.getCustomerID() %>
                                                 </td>
-                                                <td
-                                                    style="padding: 1rem; text-align: left; border-bottom: 1px solid #e9ecef;">
-                                                    Table <%= reservation.getTableID() %>
+                                                <td>Table <%= reservation.getTableID() %>
                                                 </td>
-                                                <td
-                                                    style="padding: 1rem; text-align: left; border-bottom: 1px solid #e9ecef;">
+                                                <td>
                                                     <%= reservation.getReservationDate().format(formatter) %>
                                                 </td>
-                                                <td
-                                                    style="padding: 1rem; text-align: left; border-bottom: 1px solid #e9ecef;">
+                                                <td>
                                                     <%= reservation.getNumberOfGuests() %>
                                                 </td>
-                                                <td
-                                                    style="padding: 1rem; text-align: left; border-bottom: 1px solid #e9ecef;">
+                                                <td>
                                                     <span class="status-badge 
-                                    <%= reservation.getStatus().equalsIgnoreCase(" Confirmed") ? "status-confirmed" :
-                                                        reservation.getStatus().equalsIgnoreCase("Cancelled")
+                                        <%= reservation.getStatus().equalsIgnoreCase(" Confirmed") ? "status-confirmed"
+                                                        : reservation.getStatus().equalsIgnoreCase("Cancelled")
                                                         ? "status-cancelled" : "status-pending" %>">
                                                         <%= reservation.getStatus() %>
                                                     </span>
+                                                </td>
+                                                <td class="action-cell">
+                                                    <form action="reservations" method="post" style="display: inline;">
+                                                        <input type="hidden" name="action" value="update">
+                                                        <input type="hidden" name="reservationId"
+                                                            value="<%= reservation.getReservationId() %>">
+                                                        <input type="hidden" name="status" value="Confirmed">
+                                                        <button type="submit" class="action-btn confirm-btn"
+                                                            <%=reservation.getStatus().equalsIgnoreCase("Confirmed")
+                                                            ? "disabled" : "" %>>
+                                                            Confirm
+                                                        </button>
+                                                    </form>
+                                                    <form action="reservations" method="post" style="display: inline;">
+                                                        <input type="hidden" name="action" value="update">
+                                                        <input type="hidden" name="reservationId"
+                                                            value="<%= reservation.getReservationId() %>">
+                                                        <input type="hidden" name="status" value="Cancelled">
+                                                        <button type="submit" class="action-btn cancel-btn"
+                                                            <%=reservation.getStatus().equalsIgnoreCase("Cancelled")
+                                                            ? "disabled" : "" %>>
+                                                            Cancel
+                                                        </button>
+                                                    </form>
                                                 </td>
                                             </tr>
                                             <% } %>
@@ -549,6 +615,20 @@
         const errorParam = urlParams.get('error');
         if (errorParam) {
             alert('Error al guardar la reservación: ' + errorParam);
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+
+        // Mostrar mensajes de éxito/error para actualizaciones de estado
+        const updateSuccess = urlParams.get('updateSuccess');
+        const updateError = urlParams.get('updateError');
+
+        if (updateSuccess) {
+            alert('Reservation status updated successfully: ' + updateSuccess);
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+
+        if (updateError) {
+            alert('Error updating reservation status: ' + updateError);
             window.history.replaceState({}, document.title, window.location.pathname);
         }
     </script>

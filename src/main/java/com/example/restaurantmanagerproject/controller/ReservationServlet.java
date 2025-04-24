@@ -44,6 +44,9 @@ public class ReservationServlet extends HttpServlet {
             case "create":
                 createReservation(request, response);
                 break;
+            case "update":
+                updateReservationStatus(request, response);
+                break;
             default:
                 response.sendRedirect(request.getContextPath() + "/reservations?error=invalid_action");
         }
@@ -97,6 +100,38 @@ public class ReservationServlet extends HttpServlet {
         } catch (Exception e) {
             e.printStackTrace();
             response.sendRedirect(request.getContextPath() + "/RestoReserv.jsp?error=server_error");
+        }
+    }
+
+    private void updateReservationStatus(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        try {
+            int reservationId = Integer.parseInt(request.getParameter("reservationId"));
+            String status = request.getParameter("status");
+
+            // Obtener la reservación existente
+            List<Reservation> allReservations = daoReservations.getAllReservations();
+            Reservation reservation = allReservations.stream()
+                    .filter(r -> r.getReservationId() == reservationId)
+                    .findFirst()
+                    .orElse(null);
+
+            if (reservation == null) {
+                response.sendRedirect(request.getContextPath() + "/RestoReserv.jsp?updateError=reservation_not_found");
+                return;
+            }
+
+            // Actualizar el estado
+            reservation.setStatus(status);
+            daoReservations.SaveReservation(reservation);
+
+            response.sendRedirect(request.getContextPath() + "/RestoReserv.jsp?updateSuccess=status_updated");
+
+        } catch (NumberFormatException e) {
+            response.sendRedirect(request.getContextPath() + "/RestoReserv.jsp?updateError=invalid_id");
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendRedirect(request.getContextPath() + "/RestoReserv.jsp?updateError=server_error");
         }
     }
 }
