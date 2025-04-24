@@ -2,6 +2,8 @@ package com.example.restaurantmanagerproject.controller;
 
 import com.example.restaurantmanagerproject.dao.DAOCRUDManager;
 import com.example.restaurantmanagerproject.dao.DAOReservations;
+import com.example.restaurantmanagerproject.dao.DAOCustomer;
+import com.example.restaurantmanagerproject.model.Customer;
 import com.example.restaurantmanagerproject.model.Reservation;
 
 import jakarta.servlet.ServletException;
@@ -16,160 +18,85 @@ import java.util.List;
 
 @WebServlet("/reservations")
 public class ReservationServlet extends HttpServlet {
-
-    private DAOReservations daoReservations = new DAOCRUDManager(); // assuming DAO implementation
+    private DAOReservations daoReservations = new DAOCRUDManager();
+    private DAOCustomer daoCustomer = new DAOCRUDManager();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        String reservationIdParam = request.getParameter("reservationId");
-        if (reservationIdParam != null) {
-            try {
-                int reservationId = Integer.parseInt(reservationIdParam);
-                Reservation reservation = daoReservations.getAllReservations()  // Modify as needed
-                        .stream()
-                        .filter(r -> r.getReservationId() == reservationId)
-                        .findFirst()
-                        .orElse(null);
-
-                if (reservation != null) {
-                    request.setAttribute("reservation", reservation);
-                    request.getRequestDispatcher("/reservationDetails.jsp").forward(request, response);
-                } else {
-                    response.sendRedirect(request.getContextPath() + "/reservations?error=not_found");
-                }
-            } catch (NumberFormatException e) {
-                response.sendRedirect(request.getContextPath() + "/reservations?error=invalid_id");
-            }
-        } else {
-            List<Reservation> reservations = daoReservations.getAllReservations();
-            request.setAttribute("reservations", reservations);
-            request.getRequestDispatcher("/reservations.jsp").forward(request, response);
-        }
+        List<Reservation> reservations = daoReservations.getAllReservations();
+        request.setAttribute("reservations", reservations);
+        request.getRequestDispatcher("/RestoReserv.jsp").forward(request, response);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
+        request.setCharacterEncoding("UTF-8");
         String action = request.getParameter("action");
 
         if (action == null) {
-            throw new ServletException("Action parameter is missing");
+            response.sendRedirect(request.getContextPath() + "/reservations?error=missing_action");
+            return;
         }
 
         switch (action) {
             case "create":
                 createReservation(request, response);
                 break;
-            case "update":
-                updateReservation(request, response);
-                break;
-            case "delete":
-                deleteReservation(request, response);
-                break;
             default:
-                throw new ServletException("Invalid Action: " + action);
+                response.sendRedirect(request.getContextPath() + "/reservations?error=invalid_action");
         }
     }
 
     private void createReservation(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            //Get reservation
-            int tableId = Integer.parseInt(request.getParameter("tableId"));
+            // 1. Obtener parámetros del formulario
             String customerId = request.getParameter("customerId");
+
+            Customer customer = daoCustomer.findCustomerById(customerId);
+            if (customer == null) {
+                response.sendRedirect(request.getContextPath() + "/RestoReserv.jsp?error=customer_not_found");
+                return;
+            }
+
+            // 3. Obtener parámetros de fecha/hora
+            int year = Integer.parseInt(request.getParameter("reservationYear"));
+            int month = Integer.parseInt(request.getParameter("reservationMonth"));
+            int day = Integer.parseInt(request.getParameter("reservationDay"));
+            int hour = Integer.parseInt(request.getParameter("reservationHour"));
+            int minute = Integer.parseInt(request.getParameter("reservationMinute"));
+            String period = request.getParameter("reservationPeriod");
+
+            // Convertir a formato 24 horas
+            if ("PM".equalsIgnoreCase(period) && hour < 12) {
+                hour += 12;
+            } else if ("AM".equalsIgnoreCase(period) && hour == 12) {
+                hour = 0;
+            }
+
+            LocalDateTime reservationDate = LocalDateTime.of(year, month, day, hour, minute);
+            int tableId = Integer.parseInt(request.getParameter("tableId"));
             int numberOfGuests = Integer.parseInt(request.getParameter("numberOfGuests"));
-            String status = request.getParameter("status");
 
-            //Parse reservation date only if it is provided, or just take current time
-            LocalDateTime reservationDate = request.getParameter("reservationDate") != null ?
-                    LocalDateTime.parse(request.getParameter("reservationDate")) :
-                    LocalDateTime.now();
-
-            //Create new reservation
+            // 4. Crear y guardar la reservación
             Reservation reservation = new Reservation(
-                    0,
+                    0, // ID será generado
                     customerId,
                     tableId,
                     reservationDate,
                     numberOfGuests,
-                    status
-            );
+                    "Pending");
 
             daoReservations.SaveReservation(reservation);
-            response.sendRedirect(request.getContextPath() + "/reservations?reservationId=" +
-                    reservation.getReservationId() + "&success=created");
+            response.sendRedirect(request.getContextPath() + "/RestoReserv.jsp?success=true");
+
         } catch (NumberFormatException e) {
-            response.sendRedirect(request.getContextPath() + "/reservations?error=invalid_number");
+            response.sendRedirect(request.getContextPath() + "/RestoReserv.jsp?error=invalid_number");
         } catch (Exception e) {
-            response.sendRedirect(request.getContextPath() + "/reservations?error=server_error");
-        }
-    }
-
-    private void updateReservation(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        try {
-            int reservationId = Integer.parseInt(request.getParameter("reservationId"));
-            Reservation reservation = daoReservations.getAllReservations()  // Modify as needed
-                    .stream()
-                    .filter(r -> r.getReservationId() == reservationId)
-                    .findFirst()
-                    .orElse(null);
-
-            if (reservation == null) {
-                response.sendRedirect(request.getContextPath() + "/reservations?error=not_found");
-                return;
-            }
-
-            //Update fields from request parameters
-            if (request.getParameter("tableId") != null) {
-                reservation.setTableID(Integer.parseInt(request.getParameter("tableId")));
-            }
-            if (request.getParameter("customerId") != null) {
-                reservation.setCustomerID(request.getParameter("customerId"));
-            }
-            if (request.getParameter("numberOfGuests") != null) {
-                reservation.setNumberOfGuests(Integer.parseInt(request.getParameter("numberOfGuests")));
-            }
-            if (request.getParameter("status") != null) {
-                reservation.setStatus(request.getParameter("status"));
-            }
-            if (request.getParameter("reservationDate") != null) {
-                reservation.setReservationDate(LocalDateTime.parse(request.getParameter("reservationDate")));
-            }
-
-            daoReservations.SaveReservation(reservation);
-            response.sendRedirect(request.getContextPath() + "/reservations?reservationId=" +
-                    reservationId + "&success=updated");
-        } catch (NumberFormatException e) {
-            response.sendRedirect(request.getContextPath() + "/reservations?error=invalid_number");
-        } catch (Exception e) {
-            response.sendRedirect(request.getContextPath() + "/reservations?error=server_error");
-        }
-    }
-
-    private void deleteReservation(HttpServletRequest request, HttpServletResponse response)
-            throws IOException {
-        try {
-            int reservationId = Integer.parseInt(request.getParameter("reservationId"));
-            Reservation reservation = daoReservations.getAllReservations()
-                    .stream()
-                    .filter(r -> r.getReservationId() == reservationId)
-                    .findFirst()
-                    .orElse(null);
-
-            if (reservation != null) {
-                daoReservations.RemoveReservation(reservation);
-                response.sendRedirect(request.getContextPath() + "/reservations?success=deleted");
-            } else {
-                response.sendRedirect(request.getContextPath() + "/reservations?error=not_found");
-            }
-        } catch (NumberFormatException e) {
-            response.sendRedirect(request.getContextPath() + "/reservations?error=invalid_id");
-        } catch (Exception e) {
-            response.sendRedirect(request.getContextPath() + "/reservations?error=delete_error");
+            e.printStackTrace();
+            response.sendRedirect(request.getContextPath() + "/RestoReserv.jsp?error=server_error");
         }
     }
 }
