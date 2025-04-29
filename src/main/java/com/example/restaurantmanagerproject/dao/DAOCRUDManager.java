@@ -70,21 +70,24 @@ public class DAOCRUDManager implements DAOReservations, DAOOrders, DAOPayments, 
                         String email = rsCustomer.getString("Email");
                         String phone = rsCustomer.getString("PhoneNumber");
                         double loyaltyPoints = rsCustomer.getDouble("LoyaltyPoints");
+                        String customerType = rsCustomer.getString("CustomerType");
 
-                        // Determinar el tipo de cliente
-                        char typePrefix = customerId.charAt(0);
-                        switch (typePrefix) {
-                            case '1':
+                        // Crear instancia de cliente basada en CustomerType
+                        switch (customerType.toUpperCase()) {
+                            case "FIRST":
                                 customer = new CTFirstTime(customerId, name, email, phone, loyaltyPoints);
                                 break;
-                            case '2':
+                            case "REGULAR":
                                 customer = new CTRegular(customerId, name, email, phone, loyaltyPoints);
                                 break;
-                            case '3':
+                            case "VIP":
                                 customer = new CTVIP(customerId, name, email, phone, loyaltyPoints);
                                 break;
                             default:
-                                throw new IllegalArgumentException("Tipo de cliente desconocido: " + typePrefix);
+                                System.err.println("Warning: Unknown customer type: " + customerType
+                                        + ". Defaulting to FIRST type.");
+                                customer = new CTFirstTime(customerId, name, email, phone, loyaltyPoints);
+                                break;
                         }
                     }
                 }
@@ -193,7 +196,10 @@ public class DAOCRUDManager implements DAOReservations, DAOOrders, DAOPayments, 
                                 customer = new CTVIP(customerId, name, email, phone, loyaltyPoints);
                                 break;
                             default:
-                                throw new IllegalArgumentException("Tipo de cliente desconocido: " + typePrefix);
+                                // Manejar como cliente FIRST TIME por defecto
+                                customer = new CTFirstTime(customerId, name, email, phone, loyaltyPoints);
+                                System.err.println("Advertencia: Tipo de cliente desconocido (" + typePrefix
+                                        + "). Usando FIRST TIME como predeterminado.");
                         }
                     }
                 }

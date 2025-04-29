@@ -29,7 +29,7 @@ public class OrderServlet extends HttpServlet {
                 Order order = daoOrders.getOrderById(orderId);
                 if (order != null) {
                     request.setAttribute("order", order);
-                    request.getRequestDispatcher("/orderDetails.jsp").forward(request, response);
+                    request.getRequestDispatcher("/RestoOrders.jsp").forward(request, response);
                 } else {
                     response.sendRedirect(request.getContextPath() + "/orders?error=not_found");
                 }
@@ -75,11 +75,16 @@ public class OrderServlet extends HttpServlet {
             int tableId = Integer.parseInt(request.getParameter("tableId"));
             String customerId = request.getParameter("customerId");
 
+            System.out.println("Intentando crear orden para mesa: " + tableId + ", cliente: " + customerId);
+
             // 2. Buscar cliente existente
             Customer customer = daoCustomer.findCustomerById(customerId);
             if (customer == null) {
-                response.sendRedirect(request.getContextPath() + "/RestoCreateOrder.jsp?error=customer_not_found");
+                System.out.println("Cliente no encontrado: " + customerId);
+                response.sendRedirect(request.getContextPath() + "/orders?error=customer_not_found");
                 return;
+            } else {
+                System.out.println("Cliente encontrado: " + customer.getName());
             }
 
             // 3. Procesar items seleccionados
@@ -103,7 +108,7 @@ public class OrderServlet extends HttpServlet {
             }
 
             if (orderItems.isEmpty()) {
-                response.sendRedirect(request.getContextPath() + "/RestoCreateOrder.jsp?error=no_items_selected");
+                response.sendRedirect(request.getContextPath() + "/orders?error=no_items_selected");
                 return;
             }
 
@@ -118,16 +123,16 @@ public class OrderServlet extends HttpServlet {
 
             if (daoOrders.SaveOrder(order)) {
                 response.sendRedirect(
-                        request.getContextPath() + "/RestoOrders.jsp?success=order_created&orderId=" + order.getId());
+                        request.getContextPath() + "/orders?success=order_created&orderId=" + order.getId());
             } else {
-                response.sendRedirect(request.getContextPath() + "/RestoCreateOrder.jsp?error=order_creation_failed");
+                response.sendRedirect(request.getContextPath() + "/orders?error=order_creation_failed");
             }
 
         } catch (NumberFormatException e) {
-            response.sendRedirect(request.getContextPath() + "/RestoCreateOrder.jsp?error=invalid_input");
+            response.sendRedirect(request.getContextPath() + "/orders?error=invalid_input");
         } catch (Exception e) {
             e.printStackTrace();
-            response.sendRedirect(request.getContextPath() + "/RestoCreateOrder.jsp?error=server_error");
+            response.sendRedirect(request.getContextPath() + "/orders?error=server_error");
         }
     }
 
